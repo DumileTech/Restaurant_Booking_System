@@ -9,6 +9,8 @@ import { Award, Calendar, Clock, MapPin, Star } from 'lucide-react'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
+export const dynamic = 'force-dynamic'
+
 async function getUserData(userId: string) {
   const [userResult, bookingsResult, rewardsResult] = await Promise.all([
     supabase

@@ -22,6 +22,10 @@ export const supabaseAdmin = createClient<Database>(supabaseUrl, supabaseService
 export function createServerSupabaseClient() {
   const cookieStore = cookies()
   
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    throw new Error('Missing Supabase environment variables for server client')
+  }
+  
   return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,

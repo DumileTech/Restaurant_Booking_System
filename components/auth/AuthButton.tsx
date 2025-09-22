@@ -65,7 +65,8 @@ export default function AuthButton() {
 
   const handleSignOut = async () => {
     try {
-      await apiClient.logout()
+    } catch (error) {
+      console.error('Failed to get profile:', error)
       setUser(null)
     } catch (error: any) {
       console.error('Logout error:', error)

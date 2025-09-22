@@ -7,18 +7,16 @@ import { Star, Award, MapPin } from 'lucide-react'
 
 async function getRestaurants() {
   try {
-    console.log('Fetching restaurants...')
     const { data: restaurants, error } = await supabase
       .from('restaurants')
       .select('*')
       .order('name')
     
     if (error) {
-      console.error('Supabase error:', error)
+      console.error('Error fetching restaurants:', error)
       throw error
     }
     
-    console.log('Fetched restaurants:', restaurants?.length || 0)
     return restaurants || []
   } catch (error) {
     console.error('Error fetching restaurants:', error)
@@ -29,20 +27,18 @@ async function getRestaurants() {
 
 async function getFilterOptions() {
   try {
-    console.log('Fetching filter options...')
     const { data: restaurants, error } = await supabase
       .from('restaurants')
       .select('cuisine, location')
     
     if (error) {
-      console.error('Supabase filter error:', error)
+      console.error('Error fetching filter options:', error)
       throw error
     }
     
     const cuisines = [...new Set(restaurants?.map((r: any) => r.cuisine).filter(Boolean))] as string[]
     const locations = [...new Set(restaurants?.map((r: any) => r.location).filter(Boolean))] as string[]
 
-    console.log('Filter options - cuisines:', cuisines.length, 'locations:', locations.length)
     return { cuisines, locations }
   } catch (error) {
     console.error('Error fetching filter options:', error)
