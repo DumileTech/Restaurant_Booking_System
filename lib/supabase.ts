@@ -4,20 +4,32 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Missing Supabase environment variables:', {
-    url: !!supabaseUrl,
-    key: !!supabaseAnonKey
-  })
-  throw new Error('Missing Supabase environment variables')
+  const missing = []
+  if (!supabaseUrl) missing.push('NEXT_PUBLIC_SUPABASE_URL')
+  if (!supabaseAnonKey) missing.push('NEXT_PUBLIC_SUPABASE_ANON_KEY')
+  
+  throw new Error(`Missing Supabase environment variables: ${missing.join(', ')}`)
 }
 
-// Only log in development
-if (process.env.NODE_ENV === 'development') {
-  console.log('Supabase URL:', supabaseUrl)
-  console.log('Supabase Key exists:', !!supabaseAnonKey)
+// Validate URL format
+try {
+  new URL(supabaseUrl)
+} catch {
+  throw new Error('Invalid Supabase URL format')
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true
+  },
+  global: {
+    headers: {
+      'X-Client-Info': 'tablerewards-web'
+    }
+  }
+})
 
 export type Database = {
   public: {
@@ -27,6 +39,7 @@ export type Database = {
           id: string
           email: string
           name: string | null
+          role: 'customer' | 'restaurant_manager' | 'admin'
           points: number
           created_at: string
         }
@@ -34,6 +47,7 @@ export type Database = {
           id: string
           email: string
           name?: string | null
+          role?: 'customer' | 'restaurant_manager' | 'admin'
           points?: number
           created_at?: string
         }
@@ -41,6 +55,7 @@ export type Database = {
           id?: string
           email?: string
           name?: string | null
+          role?: 'customer' | 'restaurant_manager' | 'admin'
           points?: number
           created_at?: string
         }
@@ -88,7 +103,7 @@ export type Database = {
           date: string
           time: string
           party_size: number | null
-          status: string
+          status: 'pending' | 'confirmed' | 'cancelled'
           special_requests: string | null
           created_at: string
         }
@@ -99,7 +114,7 @@ export type Database = {
           date: string
           time: string
           party_size?: number | null
-          status?: string
+          status?: 'pending' | 'confirmed' | 'cancelled'
           special_requests?: string | null
           created_at?: string
         }
@@ -110,7 +125,7 @@ export type Database = {
           date?: string
           time?: string
           party_size?: number | null
-          status?: string
+          status?: 'pending' | 'confirmed' | 'cancelled'
           special_requests?: string | null
           created_at?: string
         }

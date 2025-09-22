@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin, getCurrentUser } from '@/lib/auth-server'
+import { validateUser } from '@/lib/utils/validation'
+import { handleApiError, AuthenticationError } from '@/lib/utils/errors'
+import { sanitizeString } from '@/lib/utils/validation'
 
 export const dynamic = 'force-dynamic'
 
@@ -7,19 +10,19 @@ export async function GET(request: NextRequest) {
   try {
     const user = await getCurrentUser()
     if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+      throw new AuthenticationError()
     }
 
-    return NextResponse.json({ user })
+    return NextResponse.json({ 
+      success: true,
+      data: user 
+    })
 
   } catch (error) {
-    console.error('Get profile error:', error)
+    const { message, statusCode } = handleApiError(error)
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { success: false, error: message },
+      { status: statusCode }
     )
   }
 }
@@ -28,51 +31,59 @@ export async function PATCH(request: NextRequest) {
   try {
     const user = await getCurrentUser()
     if (!user) {
+      throw new AuthenticationError()
+    }
+
+    const body = await request.json()
+    
+    // Validate input
+    const validation = validateUser(body)
+    if (!validation.success) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
+        { 
+          success: false,
+          error: validation.errors?.[0]?.message || 'Invalid input' 
+        },
+        { status: 400 }
       )
     }
 
-    const updates = await request.json()
+    const updates = validation.data
     
-    // Users can only update their name
-    const allowedFields = ['name']
-    const filteredUpdates = Object.keys(updates)
-      .filter(key => allowedFields.includes(key))
-      .reduce((obj, key) => {
-        obj[key] = updates[key]
-        return obj
-      }, {} as any)
+    // Sanitize name if provided
+    const sanitizedUpdates: any = {}
+    if (updates.name) {
+      sanitizedUpdates.name = sanitizeString(updates.name)
+    }
 
-    if (Object.keys(filteredUpdates).length === 0) {
+    if (Object.keys(sanitizedUpdates).length === 0) {
       return NextResponse.json(
-        { error: 'No valid fields to update' },
+        { success: false, error: 'No valid fields to update' },
         { status: 400 }
       )
     }
 
     const { data: updated, error } = await supabaseAdmin
       .from('users')
-      .update(filteredUpdates)
+      .update(sanitizedUpdates)
       .eq('id', user.id)
       .select()
       .single()
 
     if (error) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 500 }
-      )
+      throw new Error(error.message)
     }
 
-    return NextResponse.json({ user: updated })
+    return NextResponse.json({ 
+      success: true,
+      data: updated 
+    })
 
   } catch (error) {
-    console.error('Update profile error:', error)
+    const { message, statusCode } = handleApiError(error)
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { success: false, error: message },
+      { status: statusCode }
     )
   }
 }

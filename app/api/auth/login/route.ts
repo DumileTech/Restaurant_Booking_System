@@ -1,32 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/auth-server'
+import { validateAuth } from '@/lib/utils/validation'
+import { handleApiError, AuthenticationError } from '@/lib/utils/errors'
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password } = await request.json()
-
-    if (!email || !password) {
+    const body = await request.json()
+    
+    // Validate input
+    const validation = validateAuth(body)
+    if (!validation.success) {
       return NextResponse.json(
-        { error: 'Email and password are required' },
+        { 
+          success: false,
+          error: validation.errors?.[0]?.message || 'Invalid input' 
+        },
         { status: 400 }
       )
     }
+
+    const { email, password } = validation.data
 
     const supabase = createServerSupabaseClient()
     
     // Sign in user with Supabase auth
     const { data, error } = await supabase.auth.signInWithPassword({
-      email,
+      email: email.toLowerCase().trim(),
       password
     })
 
     if (error) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 401 }
-      )
+      throw new AuthenticationError(error.message)
     }
 
     // Get user profile with role
@@ -37,8 +43,9 @@ export async function POST(request: NextRequest) {
       .single()
 
     return NextResponse.json({
+      success: true,
       message: 'Login successful',
-      user: {
+      data: {
         id: data.user.id,
         email: data.user.email,
         name: profile?.name || '',
@@ -48,10 +55,10 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Login error:', error)
+    const { message, statusCode } = handleApiError(error)
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { success: false, error: message },
+      { status: statusCode }
     )
   }
 }
