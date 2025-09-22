@@ -190,10 +190,7 @@ class ApiClient {
 
   // User methods
   async getProfile(): Promise<ApiResponse<User>> {
-    return this.request(`/bookings/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(updates),
-    })
+    return this.request('/users/profile')
   }
 
   async updateProfile(updates: { name?: string }): Promise<ApiResponse<User>> {
