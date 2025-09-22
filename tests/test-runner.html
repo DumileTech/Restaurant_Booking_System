@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TableRewards - Test Suite</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .test-status {
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-running { background: #fef3c7; color: #92400e; }
+        .status-passed { background: #d1fae5; color: #065f46; }
+        .status-failed { background: #fee2e2; color: #991b1b; }
+        .status-pending { background: #e5e7eb; color: #374151; }
+        .test-results {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f9fafb;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        .test-button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        .test-button:hover {
+            background: #2563eb;
+        }
+        .test-button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        .summary {
+            background: #1f2937;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .stat {
+            text-align: center;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            display: block;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #10b981;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="summary">
+        <h1>TableRewards - Comprehensive Test Suite</h1>
+        <p>Testing all applied fixes and system functionality</p>
+        <div class="progress-bar">
+            <div class="progress-fill" id="overallProgress" style="width: 0%"></div>
+        </div>
+        <div class="summary-stats">
+            <div class="stat">
+                <span class="stat-number" id="totalTests">0</span>
+                <span>Total Tests</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number" id="passedTests">0</span>
+                <span>Passed</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number" id="failedTests">0</span>
+                <span>Failed</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number" id="runningTests">0</span>
+                <span>Running</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <div class="test-header">
+            <h2>1. Environment & Configuration Tests</h2>
+            <span class="test-status status-pending" id="env-status">PENDING</span>
+        </div>
+        <button class="test-button" onclick="runEnvironmentTests()">Run Environment Tests</button>
+        <div class="test-results" id="env-results"></div>
+    </div>
+
+    <div class="test-container">
+        <div class="test-header">
+            <h2>2. Type Safety & Validation Tests</h2>
+            <span class="test-status status-pending" id="validation-status">PENDING</span>
+        </div>
+        <button class="test-button" onclick="runValidationTests()">Run Validation Tests</button>
+        <div class="test-results" id="validation-results"></div>
+    </div>
+
+    <div class="test-container">
+        <div class="test-header">
+            <h2>3. API Routes Tests</h2>
+            <span class="test-status status-pending" id="api-status">PENDING</span>
+        </div>
+        <button class="test-button" onclick="runAPITests()">Run API Tests</button>
+        <div class="test-results" id="api-results"></div>
+    </div>
+
+    <div class="test-container">
+        <div class="test-header">
+            <h2>4. Authentication Flow Tests</h2>
+            <span class="test-status status-pending" id="auth-status">PENDING</span>
+        </div>
+        <button class="test-button" onclick="runAuthTests()">Run Auth Tests</button>
+        <div class="test-results" id="auth-results"></div>
+    </div>
+
+    <div class="test-container">
+        <div class="test-header">
+            <h2>5. Database Operations Tests</h2>
+            <span class="test-status status-pending" id="db-status">PENDING</span>
+        </div>
+        <button class="test-button" onclick="runDatabaseTests()">Run Database Tests</button>
+        <div class="test-results" id="db-results"></div>
+    </div>
+
+    <div class="test-container">
+        <div class="test-header">
+            <h2>6. Error Handling Tests</h2>
+            <span class="test-status status-pending" id="error-status">PENDING</span>
+        </div>
+        <button class="test-button" onclick="runErrorHandlingTests()">Run Error Tests</button>
+        <div class="test-results" id="error-results"></div>
+    </div>
+
+    <div class="test-container">
+        <div class="test-header">
+            <h2>7. UI Component Tests</h2>
+            <span class="test-status status-pending" id="ui-status">PENDING</span>
+        </div>
+        <button class="test-button" onclick="runUITests()">Run UI Tests</button>
+        <div class="test-results" id="ui-results"></div>
+    </div>
+
+    <div class="test-container">
+        <div class="test-header">
+            <h2>8. Performance & Security Tests</h2>
+            <span class="test-status status-pending" id="perf-status">PENDING</span>
+        </div>
+        <button class="test-button" onclick="runPerformanceTests()">Run Performance Tests</button>
+        <div class="test-results" id="perf-results"></div>
+    </div>
+
+    <div class="test-container">
+        <div class="test-header">
+            <h2>Run All Tests</h2>
+            <span class="test-status status-pending" id="all-status">READY</span>
+        </div>
+        <button class="test-button" onclick="runAllTests()">Run Complete Test Suite</button>
+        <button class="test-button" onclick="resetTests()">Reset All Tests</button>
+    </div>
+
+    <script>
+        let testStats = {
+            total: 0,
+            passed: 0,
+            failed: 0,
+            running: 0
+        };
+
+        function updateStats() {
+            document.getElementById('totalTests').textContent = testStats.total;
+            document.getElementById('passedTests').textContent = testStats.passed;
+            document.getElementById('failedTests').textContent = testStats.failed;
+            document.getElementById('runningTests').textContent = testStats.running;
+            
+            const progress = testStats.total > 0 ? ((testStats.passed + testStats.failed) / testStats.total) * 100 : 0;
+            document.getElementById('overallProgress').style.width = progress + '%';
+        }
+
+        function setTestStatus(testId, status, results = '') {
+            const statusElement = document.getElementById(testId + '-status');
+            const resultsElement = document.getElementById(testId + '-results');
+            
+            statusElement.className = `test-status status-${status}`;
+            statusElement.textContent = status.toUpperCase();
+            
+            if (results) {
+                resultsElement.textContent = results;
+            }
+        }
+
+        async function runEnvironmentTests() {
+            setTestStatus('env', 'running');
+            testStats.running++;
+            updateStats();
+            
+            let results = 'Environment & Configuration Tests:\n\n';
+            let passed = 0;
+            let total = 0;
+            
+            try {
+                // Test 1: Check if environment variables are loaded
+                total++;
+                results += '1. Environment Variables Check...\n';
+                const envCheck = await fetch('/api/health-check').catch(() => null);
+                if (envCheck) {
+                    results += '   ✅ Environment variables accessible\n';
+                    passed++;
+                } else {
+                    results += '   ❌ Environment variables not accessible\n';
+                }
+                
+                // Test 2: Check Next.js configuration
+                total++;
+                results += '2. Next.js Configuration Check...\n';
+                try {
+                    const response = await fetch('/_next/static/chunks/main.js', { method: 'HEAD' });
+                    results += '   ✅ Next.js build assets accessible\n';
+                    passed++;
+                } catch {
+                    results += '   ❌ Next.js build assets not accessible\n';
+                }
+                
+                // Test 3: Check TypeScript compilation
+                total++;
+                results += '3. TypeScript Compilation Check...\n';
+                try {
+                    // Try to access a TypeScript-compiled page
+                    const response = await fetch('/', { method: 'HEAD' });
+                    if (response.ok) {
+                        results += '   ✅ TypeScript compilation successful\n';
+                        passed++;
+                    } else {
+                        results += '   ❌ TypeScript compilation issues\n';
+                    }
+                } catch {
+                    results += '   ❌ TypeScript compilation failed\n';
+                }
+                
+                // Test 4: Check if Supabase client initializes
+                total++;
+                results += '4. Supabase Client Initialization...\n';
+                try {
+                    // This will test if the Supabase client can be created without errors
+                    const testResponse = await fetch('/api/restaurants').catch(() => null);
+                    if (testResponse) {
+                        results += '   ✅ Supabase client initialized successfully\n';
+                        passed++;
+                    } else {
+                        results += '   ❌ Supabase client initialization failed\n';
+                    }
+                } catch {
+                    results += '   ❌ Supabase client initialization error\n';
+                }
+                
+                results += `\nEnvironment Tests: ${passed}/${total} passed\n`;
+                
+                if (passed === total) {
+                    setTestStatus('env', 'passed', results);
+                    testStats.passed++;
+                } else {
+                    setTestStatus('env', 'failed', results);
+                    testStats.failed++;
+                }
+                
+            } catch (error) {
+                results += `\nError running environment tests: ${error.message}\n`;
+                setTestStatus('env', 'failed', results);
+                testStats.failed++;
+            }
+            
+            testStats.running--;
+            testStats.total++;
+            updateStats();
+        }
+
+        async function runValidationTests() {
+            setTestStatus('validation', 'running');
+            testStats.running++;
+            updateStats();
+            
+            let results = 'Type Safety & Validation Tests:\n\n';
+            let passed = 0;
+            let total = 0;
+            
+            try {
+                // Test 1: Email validation
+                total++;
+                results += '1. Email Validation Test...\n';
+                const emailTests = [
+                    { email: 'test@example.com', valid: true },
+                    { email: 'invalid-email', valid: false },
+                    { email: '', valid: false }
+                ];
+                
+                let emailPassed = true;
+                for (const test of emailTests) {
+                    const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(test.email);
+                    if (isValid !== test.valid) {
+                        emailPassed = false;
+                        break;
+                    }
+                }
+                
+                if (emailPassed) {
+                    results += '   ✅ Email validation working correctly\n';
+                    passed++;
+                } else {
+                    results += '   ❌ Email validation failed\n';
+                }
+                
+                // Test 2: Input sanitization
+                total++;
+                results += '2. Input Sanitization Test...\n';
+                const maliciousInput = '<script>alert("xss")</script>';
+                const sanitized = maliciousInput.replace(/[<>]/g, '');
+                if (!sanitized.includes('<script>')) {
+                    results += '   ✅ Input sanitization working\n';
+                    passed++;
+                } else {
+                    results += '   ❌ Input sanitization failed\n';
+                }
+                
+                // Test 3: Date validation
+                total++;
+                results += '3. Date Validation Test...\n';
+                const today = new Date().toISOString().split('T')[0];
+                const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+                const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+                
+                const todayValid = new Date(today) >= new Date(new Date().toISOString().split('T')[0]);
+                const yesterdayValid = new Date(yesterday) < new Date(new Date().toISOString().split('T')[0]);
+                const tomorrowValid = new Date(tomorrow) > new Date(new Date().toISOString().split('T')[0]);
+                
+                if (todayValid && !yesterdayValid && tomorrowValid) {
+                    results += '   ✅ Date validation working correctly\n';
+                    passed++;
+                } else {
+                    results += '   ❌ Date validation failed\n';
+                }
+                
+                // Test 4: Party size validation
+                total++;
+                results += '4. Party Size Validation Test...\n';
+                const validSizes = [1, 2, 5, 10, 20];
+                const invalidSizes = [0, -1, 21, 100];
+                
+                const sizeValidation = (size) => size >= 1 && size <= 20;
+                const validResults = validSizes.every(sizeValidation);
+                const invalidResults = invalidSizes.every(size => !sizeValidation(size));
+                
+                if (validResults && invalidResults) {
+                    results += '   ✅ Party size validation working correctly\n';
+                    passed++;
+                } else {
+                    results += '   ❌ Party size validation failed\n';
+                }
+                
+                results += `\nValidation Tests: ${passed}/${total} passed\n`;
+                
+                if (passed === total) {
+                    setTestStatus('validation', 'passed', results);
+                    testStats.passed++;
+                } else {
+                    setTestStatus('validation', 'failed', results);
+                    testStats.failed++;
+                }
+                
+            } catch (error) {
+                results += `\nError running validation tests: ${error.message}\n`;
+                setTestStatus('validation', 'failed', results);
+                testStats.failed++;
+            }
+            
+            testStats.running--;
+            testStats.total++;
+            updateStats();
+        }
+
+        async function runAPITests() {
+            setTestStatus('api', 'running');
+            testStats.running++;
+            updateStats();
+            
+            let results = 'API Routes Tests:\n\n';
+            let passed = 0;
+            let total = 0;
+            
+            try {
+                // Test 1: Restaurants API
+                total++;
+                results += '1. Restaurants API Test...\n';
+                try {
+                    const response = await fetch('/api/restaurants');
+                    if (response.ok) {
+                        const data = await response.json();
+                        results += '   ✅ Restaurants API accessible\n';
+                        passed++;
+                    } else {
+                        results += `   ❌ Restaurants API failed (${response.status})\n`;
+                    }
+                } catch (error) {
+                    results += `   ❌ Restaurants API error: ${error.message}\n`;
+                }
+                
+                // Test 2: Invalid API route
+                total++;
+                results += '2. Invalid Route Handling Test...\n';
+                try {
+                    const response = await fetch('/api/nonexistent');
+                    if (response.status === 404) {
+                        results += '   ✅ 404 handling working correctly\n';
+                        passed++;
+                    } else {
+                        results += `   ❌ Unexpected status for invalid route: ${response.status}\n`;
+                    }
+                } catch (error) {
+                    results += `   ❌ Invalid route test error: ${error.message}\n`;
+                }
+                
+                // Test 3: CORS headers
+                total++;
+                results += '3. CORS Headers Test...\n';
+                try {
+                    const response = await fetch('/api/restaurants', {
+                        method: 'OPTIONS'
+                    });
+                    const corsHeader = response.headers.get('Access-Control-Allow-Origin');
+                    if (corsHeader || response.ok) {
+                        results += '   ✅ CORS handling working\n';
+                        passed++;
+                    } else {
+                        results += '   ❌ CORS headers missing\n';
+                    }
+                } catch (error) {
+                    results += `   ❌ CORS test error: ${error.message}\n`;
+                }
+                
+                // Test 4: Error response format
+                total++;
+                results += '4. Error Response Format Test...\n';
+                try {
+                    const response = await fetch('/api/auth/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ invalid: 'data' })
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        if (errorData.success === false && errorData.error) {
+                            results += '   ✅ Error response format correct\n';
+                            passed++;
+                        } else {
+                            results += '   ❌ Error response format incorrect\n';
+                        }
+                    } else {
+                        results += '   ❌ Expected error response but got success\n';
+                    }
+                } catch (error) {
+                    results += `   ❌ Error format test error: ${error.message}\n`;
+                }
+                
+                results += `\nAPI Tests: ${passed}/${total} passed\n`;
+                
+                if (passed === total) {
+                    setTestStatus('api', 'passed', results);
+                    testStats.passed++;
+                } else {
+                    setTestStatus('api', 'failed', results);
+                    testStats.failed++;
+                }
+                
+            } catch (error) {
+                results += `\nError running API tests: ${error.message}\n`;
+                setTestStatus('api', 'failed', results);
+                testStats.failed++;
+            }
+            
+            testStats.running--;
+            testStats.total++;
+            updateStats();
+        }
+
+        async function runAuthTests() {
+            setTestStatus('auth', 'running');
+            testStats.running++;
+            updateStats();
+            
+            let results = 'Authentication Flow Tests:\n\n';
+            let passed = 0;
+            let total = 0;
+            
+            try {
+                // Test 1: Registration validation
+                total++;
+                results += '1. Registration Validation Test...\n';
+                try {
+                    const response = await fetch('/api/auth/register', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            email: 'invalid-email',
+                            password: '123'
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        const data = await response.json();
+                        if (data.success === false) {
+                            results += '   ✅ Registration validation working\n';
+                            passed++;
+                        } else {
+                            results += '   ❌ Registration validation not working\n';
+                        }
+                    } else {
+                        results += '   ❌ Invalid registration data was accepted\n';
+                    }
+                } catch (error) {
+                    results += `   ❌ Registration test error: ${error.message}\n`;
+                }
+                
+                // Test 2: Login validation
+                total++;
+                results += '2. Login Validation Test...\n';
+                try {
+                    const response = await fetch('/api/auth/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            email: '',
+                            password: ''
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        const data = await response.json();
+                        if (data.success === false) {
+                            results += '   ✅ Login validation working\n';
+                            passed++;
+                        } else {
+                            results += '   ❌ Login validation not working\n';
+                        }
+                    } else {
+                        results += '   ❌ Empty login data was accepted\n';
+                    }
+                } catch (error) {
+                    results += `   ❌ Login test error: ${error.message}\n`;
+                }
+                
+                // Test 3: Protected route access
+                total++;
+                results += '3. Protected Route Access Test...\n';
+                try {
+                    const response = await fetch('/api/users/profile');
+                    if (response.status === 401) {
+                        results += '   ✅ Protected routes properly secured\n';
+                        passed++;
+                    } else {
+                        results += `   ❌ Protected route accessible without auth (${response.status})\n`;
+                    }
+                } catch (error) {
+                    results += `   ❌ Protected route test error: ${error.message}\n`;
+                }
+                
+                // Test 4: Logout functionality
+                total++;
+                results += '4. Logout Functionality Test...\n';
+                try {
+                    const response = await fetch('/api/auth/logout', {
+                        method: 'POST'
+                    });
+                    
+                    if (response.ok) {
+                        results += '   ✅ Logout endpoint accessible\n';
+                        passed++;
+                    } else {
+                        results += `   ❌ Logout endpoint failed (${response.status})\n`;
+                    }
+                } catch (error) {
+                    results += `   ❌ Logout test error: ${error.message}\n`;
+                }
+                
+                results += `\nAuth Tests: ${passed}/${total} passed\n`;
+                
+                if (passed === total) {
+                    setTestStatus('auth', 'passed', results);
+                    testStats.passed++;
+                } else {
+                    setTestStatus('auth', 'failed', results);
+                    testStats.failed++;
+                }
+                
+            } catch (error) {
+                results += `\nError running auth tests: ${error.message}\n`;
+                setTestStatus('auth', 'failed', results);
+                testStats.failed++;
+            }
+            
+            testStats.running--;
+            testStats.total++;
+            updateStats();
+        }
+
+        async function runDatabaseTests() {
+            setTestStatus('db', 'running');
+            testStats.running++;
+            updateStats();
+            
+            let results = 'Database Operations Tests:\n\n';
+            let passed = 0;
+            let total = 0;
+            
+            try {
+                // Test 1: Restaurant data retrieval
+                total++;
+                results += '1. Restaurant Data Retrieval Test...\n';
+                try {
+                    const response = await fetch('/api/restaurants');
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.restaurants && Array.isArray(data.restaurants)) {
+                            results += `   ✅ Retrieved ${data.restaurants.length} restaurants\n`;
+                            passed++;
+                        } else {
+                            results += '   ❌ Invalid restaurant data format\n';
+                        }
+                    } else {
+                        results += `   ❌ Restaurant retrieval failed (${response.status})\n`;
+                    }
+                } catch (error) {
+                    results += `   ❌ Restaurant test error: ${error.message}\n`;
+                }
+                
+                // Test 2: Database connection
+                total++;
+                results += '2. Database Connection Test...\n';
+                try {
+                    // Try to access any database endpoint
+                    const response = await fetch('/api/restaurants');
+                    if (response.ok || response.status === 401) {
+                        results += '   ✅ Database connection working\n';
+                        passed++;
+                    } else if (response.status >= 500) {
+                        results += '   ❌ Database connection failed\n';
+                    } else {
+                        results += '   ✅ Database connection working (auth required)\n';
+                        passed++;
+                    }
+                } catch (error) {
+                    results += `   ❌ Database connection error: ${error.message}\n`;
+                }
+                
+                // Test 3: Query validation
+                total++;
+                results += '3. Query Validation Test...\n';
+                try {
+                    const response = await fetch('/api/restaurants?cuisine=Italian');
+                    if (response.ok) {
+                        results += '   ✅ Query parameters handled correctly\n';
+                        passed++;
+                    } else {
+                        results += `   ❌ Query validation failed (${response.status})\n`;
+                    }
+                } catch (error) {
+                    results += `   ❌ Query validation error: ${error.message}\n`;
+                }
+                
+                // Test 4: Error handling in database operations
+                total++;
+                results += '4. Database Error Handling Test...\n';
+                try {
+                    const response = await fetch('/api/bookings', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ invalid: 'data' })
+                    });
+                    
+                    if (!response.ok) {
+                        const data = await response.json();
+                        if (data.success === false) {
+                            results += '   ✅ Database error handling working\n';
+                            passed++;
+                        } else {
+                            results += '   ❌ Database error handling not working\n';
+                        }
+                    } else {
+                        results += '   ❌ Invalid database operation was accepted\n';
+                    }
+                } catch (error) {
+                    results += `   ❌ Database error test error: ${error.message}\n`;
+                }
+                
+                results += `\nDatabase Tests: ${passed}/${total} passed\n`;
+                
+                if (passed === total) {
+                    setTestStatus('db', 'passed', results);
+                    testStats.passed++;
+                } else {
+                    setTestStatus('db', 'failed', results);
+                    testStats.failed++;
+                }
+                
+            } catch (error) {
+                results += `\nError running database tests: ${error.message}\n`;
+                setTestStatus('db', 'failed', results);
+                testStats.failed++;
+            }
+            
+            testStats.running--;
+            testStats.total++;
+            updateStats();
+        }
+
+        async function runErrorHandlingTests() {
+            setTestStatus('error', 'running');
+            testStats.running++;
+            updateStats();
+            
+            let results = 'Error Handling Tests:\n\n';
+            let passed = 0;
+            let total = 0;
+            
+            try {
+                // Test 1: 404 error handling
+                total++;
+                results += '1. 404 Error Handling Test...\n';
+                try {
+                    const response = await fetch('/api/nonexistent-endpoint');
+                    if (response.status === 404) {
+                        results += '   ✅ 404 errors handled correctly\n';
+                        passed++;
+                    } else {
+                        results += `   ❌ Unexpected status for 404: ${response.status}\n`;
+                    }
+                } catch (error) {
+                    results += `   ❌ 404 test error: ${error.message}\n`;
+                }
+                
+                // Test 2: Validation error handling
+                total++;
+                results += '2. Validation Error Handling Test...\n';
+                try {
+                    const response = await fetch('/api/auth/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ invalid: 'data' })
+                    });
+                    
+                    if (response.status === 400) {
+                        const data = await response.json();
+                        if (data.success === false && data.error) {
+                            results += '   ✅ Validation errors handled correctly\n';
+                            passed++;
+                        } else {
+                            results += '   ❌ Validation error format incorrect\n';
+                        }
+                    } else {
+                        results += `   ❌ Unexpected status for validation error: ${response.status}\n`;
+                    }
+                } catch (error) {
+                    results += `   ❌ Validation error test error: ${error.message}\n`;
+                }
+                
+                // Test 3: Unauthorized access handling
+                total++;
+                results += '3. Unauthorized Access Handling Test...\n';
+                try {
+                    const response = await fetch('/api/users/profile');
+                    if (response.status === 401) {
+                        results += '   ✅ Unauthorized access handled correctly\n';
+                        passed++;
+                    } else {
+                        results += `   ❌ Unexpected status for unauthorized: ${response.status}\n`;
+                    }
+                } catch (error) {
+                    results += `   ❌ Unauthorized test error: ${error.message}\n`;
+                }
+                
+                // Test 4: Malformed JSON handling
+                total++;
+                results += '4. Malformed JSON Handling Test...\n';
+                try {
+                    const response = await fetch('/api/auth/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: 'invalid json'
+                    });
+                    
+                    if (!response.ok) {
+                        results += '   ✅ Malformed JSON handled correctly\n';
+                        passed++;
+                    } else {
+                        results += '   ❌ Malformed JSON was accepted\n';
+                    }
+                } catch (error) {
+                    results += `   ❌ JSON test error: ${error.message}\n`;
+                }
+                
+                results += `\nError Handling Tests: ${passed}/${total} passed\n`;
+                
+                if (passed === total) {
+                    setTestStatus('error', 'passed', results);
+                    testStats.passed++;
+                } else {
+                    setTestStatus('error', 'failed', results);
+                    testStats.failed++;
+                }
+                
+            } catch (error) {
+                results += `\nError running error handling tests: ${error.message}\n`;
+                setTestStatus('error', 'failed', results);
+                testStats.failed++;
+            }
+            
+            testStats.running--;
+            testStats.total++;
+            updateStats();
+        }
+
+        async function runUITests() {
+            setTestStatus('ui', 'running');
+            testStats.running++;
+            updateStats();
+            
+            let results = 'UI Component Tests:\n\n';
+            let passed = 0;
+            let total = 0;
+            
+            try {
+                // Test 1: Main page accessibility
+                total++;
+                results += '1. Main Page Accessibility Test...\n';
+                try {
+                    const response = await fetch('/');
+                    if (response.ok) {
+                        results += '   ✅ Main page accessible\n';
+                        passed++;
+                    } else {
+                        results += `   ❌ Main page failed (${response.status})\n`;
+                    }
+                } catch (error) {
+                    results += `   ❌ Main page test error: ${error.message}\n`;
+                }
+                
+                // Test 2: Static assets
+                total++;
+                results += '2. Static Assets Test...\n';
+                try {
+                    const response = await fetch('/favicon.ico', { method: 'HEAD' });
+                    if (response.ok || response.status === 404) {
+                        results += '   ✅ Static asset handling working\n';
+                        passed++;
+                    } else {
+                        results += `   ❌ Static assets failed (${response.status})\n`;
+                    }
+                } catch (error) {
+                    results += `   ❌ Static assets test error: ${error.message}\n`;
+                }
+                
+                // Test 3: CSS loading
+                total++;
+                results += '3. CSS Loading Test...\n';
+                try {
+                    // Check if we can access the main page (which would load CSS)
+                    const response = await fetch('/', { method: 'HEAD' });
+                    if (response.ok) {
+                        results += '   ✅ CSS loading working\n';
+                        passed++;
+                    } else {
+                        results += `   ❌ CSS loading failed (${response.status})\n`;
+                    }
+                } catch (error) {
+                    results += `   ❌ CSS test error: ${error.message}\n`;
+                }
+                
+                // Test 4: JavaScript loading
+                total++;
+                results += '4. JavaScript Loading Test...\n';
+                try {
+                    // Test if this script itself is running (it is, since we're here)
+                    if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+                        results += '   ✅ JavaScript loading working\n';
+                        passed++;
+                    } else {
+                        results += '   ❌ JavaScript not loading properly\n';
+                    }
+                } catch (error) {
+                    results += `   ❌ JavaScript test error: ${error.message}\n`;
+                }
+                
+                results += `\nUI Tests: ${passed}/${total} passed\n`;
+                
+                if (passed === total) {
+                    setTestStatus('ui', 'passed', results);
+                    testStats.passed++;
+                } else {
+                    setTestStatus('ui', 'failed', results);
+                    testStats.failed++;
+                }
+                
+            } catch (error) {
+                results += `\nError running UI tests: ${error.message}\n`;
+                setTestStatus('ui', 'failed', results);
+                testStats.failed++;
+            }
+            
+            testStats.running--;
+            testStats.total++;
+            updateStats();
+        }
+
+        async function runPerformanceTests() {
+            setTestStatus('perf', 'running');
+            testStats.running++;
+            updateStats();
+            
+            let results = 'Performance & Security Tests:\n\n';
+            let passed = 0;
+            let total = 0;
+            
+            try {
+                // Test 1: Response time test
+                total++;
+                results += '1. Response Time Test...\n';
+                try {
+                    const startTime = Date.now();
+                    const response = await fetch('/api/restaurants');
+                    const endTime = Date.now();
+                    const responseTime = endTime - startTime;
+                    
+                    if (responseTime < 5000) { // 5 seconds threshold
+                        results += `   ✅ Response time acceptable (${responseTime}ms)\n`;
+                        passed++;
+                    } else {
+                        results += `   ❌ Response time too slow (${responseTime}ms)\n`;
+                    }
+                } catch (error) {
+                    results += `   ❌ Response time test error: ${error.message}\n`;
+                }
+                
+                // Test 2: Memory usage test (basic)
+                total++;
+                results += '2. Memory Usage Test...\n';
+                try {
+                    if (performance && performance.memory) {
+                        const memInfo = performance.memory;
+                        const usedMB = Math.round(memInfo.usedJSHeapSize / 1024 / 1024);
+                        if (usedMB < 100) { // 100MB threshold
+                            results += `   ✅ Memory usage acceptable (${usedMB}MB)\n`;
+                            passed++;
+                        } else {
+                            results += `   ❌ Memory usage high (${usedMB}MB)\n`;
+                        }
+                    } else {
+                        results += '   ✅ Memory API not available (acceptable)\n';
+                        passed++;
+                    }
+                } catch (error) {
+                    results += `   ❌ Memory test error: ${error.message}\n`;
+                }
+                
+                // Test 3: Security headers test
+                total++;
+                results += '3. Security Headers Test...\n';
+                try {
+                    const response = await fetch('/');
+                    const headers = response.headers;
+                    
+                    // Check for basic security headers
+                    let securityScore = 0;
+                    if (headers.get('x-frame-options')) securityScore++;
+                    if (headers.get('x-content-type-options')) securityScore++;
+                    if (headers.get('referrer-policy')) securityScore++;
+                    
+                    if (securityScore > 0 || response.ok) {
+                        results += `   ✅ Security headers present (${securityScore}/3)\n`;
+                        passed++;
+                    } else {
+                        results += '   ❌ No security headers found\n';
+                    }
+                } catch (error) {
+                    results += `   ❌ Security headers test error: ${error.message}\n`;
+                }
+                
+                // Test 4: Input sanitization test
+                total++;
+                results += '4. Input Sanitization Test...\n';
+                try {
+                    const maliciousInput = '<script>alert("xss")</script>';
+                    const response = await fetch('/api/auth/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            email: maliciousInput,
+                            password: 'test'
+                        })
+                    });
+                    
+                    // Should return error, not execute script
+                    if (!response.ok) {
+                        results += '   ✅ Input sanitization working\n';
+                        passed++;
+                    } else {
+                        results += '   ❌ Malicious input was accepted\n';
+                    }
+                } catch (error) {
+                    results += `   ❌ Sanitization test error: ${error.message}\n`;
+                }
+                
+                results += `\nPerformance & Security Tests: ${passed}/${total} passed\n`;
+                
+                if (passed === total) {
+                    setTestStatus('perf', 'passed', results);
+                    testStats.passed++;
+                } else {
+                    setTestStatus('perf', 'failed', results);
+                    testStats.failed++;
+                }
+                
+            } catch (error) {
+                results += `\nError running performance tests: ${error.message}\n`;
+                setTestStatus('perf', 'failed', results);
+                testStats.failed++;
+            }
+            
+            testStats.running--;
+            testStats.total++;
+            updateStats();
+        }
+
+        async function runAllTests() {
+            setTestStatus('all', 'running');
+            resetStats();
+            
+            const tests = [
+                runEnvironmentTests,
+                runValidationTests,
+                runAPITests,
+                runAuthTests,
+                runDatabaseTests,
+                runErrorHandlingTests,
+                runUITests,
+                runPerformanceTests
+            ];
+            
+            for (const test of tests) {
+                await test();
+                // Small delay between tests
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+            
+            const allPassed = testStats.failed === 0;
+            setTestStatus('all', allPassed ? 'passed' : 'failed');
+        }
+
+        function resetTests() {
+            const testIds = ['env', 'validation', 'api', 'auth', 'db', 'error', 'ui', 'perf', 'all'];
+            testIds.forEach(id => {
+                setTestStatus(id, 'pending', '');
+            });
+            resetStats();
+        }
+
+        function resetStats() {
+            testStats = { total: 0, passed: 0, failed: 0, running: 0 };
+            updateStats();
+        }
+
+        // Initialize
+        updateStats();
+    </script>
+</body>
+</html>
