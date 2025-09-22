@@ -1,4 +1,4 @@
-import { createClient } from '@/utils/supabase/server'
+import { supabase } from '@/lib/supabase'
 import BookingForm from '@/components/bookings/BookingForm';
 import AuthButton from '@/components/auth/AuthButton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,7 +13,6 @@ import { redirect } from 'next/navigation';
 // Required if you are using "output: 'export'" in next.config.js
 export async function generateStaticParams() {
   try {
-    const supabase = await createClient()
     const { data: restaurants, error } = await supabase
       .from('restaurants')
       .select('id')
@@ -29,7 +28,6 @@ export async function generateStaticParams() {
 
 async function getRestaurant(id: string) {
   try {
-    const supabase = await createClient()
     const { data: restaurant, error } = await supabase
       .from('restaurants')
       .select('*')
@@ -45,7 +43,6 @@ async function getRestaurant(id: string) {
 
 async function getCurrentUser() {
   try {
-    const supabase = await createClient()
     const { data: { user }, error } = await supabase.auth.getUser()
     if (error) throw error
     return user

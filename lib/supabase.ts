@@ -1,11 +1,9 @@
-import { createClient as createBrowserClient } from '@/utils/supabase/client'
-import { createClient as createServerClient } from '@/utils/supabase/server'
+import { createClient } from '@supabase/supabase-js'
 
-// For client-side usage
-export const supabase = createBrowserClient()
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-// For server-side usage
-export const getServerSupabase = createServerClient
+export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 export type Database = {
   public: {
