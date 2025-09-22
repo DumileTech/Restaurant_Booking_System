@@ -58,14 +58,6 @@ class ApiClient {
       throw new Error('Email and password are required')
     }
     
-    const response = await fetch(`/api${endpoint}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
-      ...options,
-    })
-
     return this.request('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ 
@@ -76,9 +68,8 @@ class ApiClient {
   }
 
   async logout(): Promise<ApiResponse> {
-    return this.request('/auth/register', {
+    return this.request('/auth/logout', {
       method: 'POST',
-      body: JSON.stringify({ email, password, name }),
     })
   }
 
@@ -88,10 +79,12 @@ class ApiClient {
     location?: string; 
     search?: string 
   }): Promise<ApiResponse<Restaurant[]>> {
-    return this.request('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-    })
+    const params = new URLSearchParams()
+    if (filters?.cuisine) params.set('cuisine', filters.cuisine)
+    if (filters?.location) params.set('location', filters.location)
+    if (filters?.search) params.set('search', filters.search)
+    
+    return this.request(`/restaurants?${params}`)
   }
 
   async getRestaurant(id: string): Promise<ApiResponse<Restaurant>> {
@@ -114,12 +107,12 @@ class ApiClient {
       throw new Error('Party size must be between 1 and 20')
     }
     
-    const params = new URLSearchParams()
-    if (filters?.cuisine) params.set('cuisine', filters.cuisine)
-    if (filters?.location) params.set('location', filters.location)
-    if (filters?.search) params.set('search', filters.search)
+    const params = new URLSearchParams({
+      date,
+      party_size: partySize.toString()
+    })
     
-    return this.request(`/restaurants?${params}`)
+    return this.request(`/restaurants/${id}/availability?${params}`)
   }
 
   // Booking methods with validation

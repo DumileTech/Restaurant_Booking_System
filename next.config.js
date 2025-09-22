@@ -5,7 +5,7 @@ const nextConfig = {
   },
   images: { unoptimized: true },
   experimental: {
-    serverComponentsExternalPackages: ['@supabase/supabase-js']
+    serverComponentsExternalPackages: ['@supabase/supabase-js', '@supabase/auth-helpers-nextjs']
   }
 };
 
