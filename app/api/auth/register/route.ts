@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
     if (profileError) {
       // Clean up auth user if profile creation fails
       await supabaseAdmin.auth.admin.deleteUser(authData.user.id)
-      throw new Error('Failed to create user profile')
+      throw new Error(profileError.message || 'Failed to create user profile')
     }
 
     return NextResponse.json({
