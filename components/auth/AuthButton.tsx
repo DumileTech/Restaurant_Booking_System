@@ -164,3 +164,5 @@ export default function AuthButton() {
           Sign Up
         </a>
       </Button>
+  )
+}
