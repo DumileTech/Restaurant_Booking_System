@@ -1,39 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin, getServerUser, hasRole } from '@/lib/auth-server'
-import { cookies } from 'next/headers'
-import jwt from 'jsonwebtoken'
-
-async function getUserFromToken(token: string) {
-  try {
-    const decoded = jwt.decode(token) as any
-    const userId = decoded?.sub
-    if (!userId) return null
-    
-    return await getServerUser(userId)
-  } catch {
-    return null
-  }
-}
+import { supabaseAdmin, getCurrentUser, hasRole } from '@/lib/auth-server'
 
 export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const cookieStore = cookies()
-    const token = cookieStore.get('supabase-auth-token')?.value
-
-    if (!token) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
-
-    const user = await getUserFromToken(token)
+    const user = await getCurrentUser()
     if (!user) {
       return NextResponse.json(
-        { error: 'Invalid token' },
+        { error: 'Unauthorized' },
         { status: 401 }
       )
     }

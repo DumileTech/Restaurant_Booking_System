@@ -58,12 +58,23 @@ export async function getCurrentUser() {
   return profile
 }
 // User roles
+// Get server user by ID
+export async function getServerUser(userId: string) {
+  const { data: profile } = await supabaseAdmin
+    .from('users')
+    .select('*')
+    .eq('id', userId)
+    .single()
+  
+  return profile
+}
+
 export type UserRole = 'customer' | 'restaurant_manager' | 'admin'
 
 // Check if user has required role
-export async function hasRole(requiredRole: UserRole): Promise<boolean> {
+export async function hasRole(userId: string, requiredRole: UserRole): Promise<boolean> {
   try {
-    const user = await getCurrentUser()
+    const user = await getServerUser(userId)
     if (!user) return false
     
     const userRole = (user.role || 'customer') as UserRole
@@ -79,9 +90,9 @@ export async function hasRole(requiredRole: UserRole): Promise<boolean> {
 }
 
 // Check if user can access restaurant
-export async function canAccessRestaurant(restaurantId: string): Promise<boolean> {
+export async function canAccessRestaurant(userId: string, restaurantId: string): Promise<boolean> {
   try {
-    const user = await getCurrentUser()
+    const user = await getServerUser(userId)
     if (!user) return false
     
     const userRole = (user.role || 'customer') as UserRole

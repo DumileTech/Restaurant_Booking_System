@@ -1,36 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin, canAccessRestaurant } from '@/lib/auth-server'
-import { cookies } from 'next/headers'
-import jwt from 'jsonwebtoken'
+import { supabaseAdmin, getCurrentUser, canAccessRestaurant } from '@/lib/auth-server'
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const cookieStore = cookies()
-    const token = cookieStore.get('supabase-auth-token')?.value
-
-    if (!token) {
+    const user = await getCurrentUser()
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       )
     }
 
-    // Decode token to get user ID (simplified - in production use proper JWT verification)
-    const decoded = jwt.decode(token) as any
-    const userId = decoded?.sub
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'Invalid token' },
-        { status: 401 }
-      )
-    }
-
     // Check if user can access this restaurant's bookings
-    const hasAccess = await canAccessRestaurant(userId, params.id)
+    const hasAccess = await canAccessRestaurant(user.id, params.id)
     if (!hasAccess) {
       return NextResponse.json(
         { error: 'Forbidden' },
