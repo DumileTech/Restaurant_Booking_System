@@ -354,7 +354,7 @@ async function userOperations(operation: string, options: Record<string, string>
 
       const newPoints = (currentUser?.points || 0) + parseInt(options.points)
       
-      const { data: updated, error: updateError } = await supabase
+      const { data: updatedUserPoints, error: updateUserPointsError } = await supabase
         .from('users')
         .update({ points: newPoints })
         .eq('id', options.id)
@@ -362,7 +362,7 @@ async function userOperations(operation: string, options: Record<string, string>
         .single()
 
       // Create reward record
-      if (!updateError) {
+      if (!updateUserPointsError) {
         await supabase
           .from('rewards')
           .insert({
@@ -372,7 +372,7 @@ async function userOperations(operation: string, options: Record<string, string>
           })
       }
 
-      logResult('Add Points to User', updated, updateError)
+      logResult('Add Points to User', updatedUserPoints, updateUserPointsError)
       break
 
     default:
