@@ -143,8 +143,7 @@ export default function AuthButton() {
             Account ({user.points} pts)
           </a>
         </Button>
-        <Button variant="outline" size="sm" asChild>
-          <a href="/account">
+        <Button variant="outline" size="sm" onClick={handleSignOut} disabled={loading}>
           <LogOut className="w-4 h-4 mr-1" />
           {loading ? 'Signing Out...' : 'Sign Out'}
         </Button>
