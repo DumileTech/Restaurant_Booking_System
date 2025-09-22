@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/utils/supabase/server'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -9,6 +9,7 @@ import { redirect } from 'next/navigation'
 
 export async function generateStaticParams() {
   try {
+    const supabase = await createClient()
     const { data: restaurants, error } = await supabase
       .from('restaurants')
       .select('id')
@@ -34,6 +35,7 @@ export async function generateStaticParams() {
 
 async function getRestaurant(id: string) {
   try {
+    const supabase = await createClient()
     const { data: restaurant, error } = await supabase
       .from('restaurants')
       .select('*')

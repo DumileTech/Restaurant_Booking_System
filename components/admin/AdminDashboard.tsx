@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/utils/supabase/client'
 import { CheckCircle, XCircle, Clock, Users, Calendar, MapPin } from 'lucide-react'
 
 interface Restaurant {
@@ -48,6 +48,7 @@ export default function AdminDashboard({ restaurants }: AdminDashboardProps) {
   const fetchBookings = async () => {
     setLoading(true)
     try {
+      const supabase = createClient()
       const { data, error } = await supabase
         .from('bookings')
         .select(`

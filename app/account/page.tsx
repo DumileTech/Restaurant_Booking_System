@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/utils/supabase/server'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -10,6 +10,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
 async function getUserData(userId: string) {
+  const supabase = await createClient()
   const [userResult, bookingsResult, rewardsResult] = await Promise.all([
     supabase
       .from('users')

@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/utils/supabase/server'
 import AdminDashboard from '@/components/admin/AdminDashboard'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 export default async function AdminPage() {
+  const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   
   if (!user) {
@@ -13,7 +14,8 @@ export default async function AdminPage() {
   }
 
   // Check if user is an admin of any restaurant
-  const { data: restaurants } = await supabase
+  const supabaseClient = await createClient()
+  const { data: restaurants } = await supabaseClient
     .from('restaurants')
     .select('*')
     .eq('admin_id', user.id)

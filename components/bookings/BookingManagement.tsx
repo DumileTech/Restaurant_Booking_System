@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/utils/supabase/client'
 import { Calendar, Clock, Users, Edit, Trash2, AlertCircle } from 'lucide-react'
 
 interface Booking {
@@ -47,6 +47,7 @@ export default function BookingManagement({ booking, onUpdate }: BookingManageme
   const handleUpdate = async () => {
     setLoading(true)
     try {
+      const supabase = createClient()
       const { error } = await supabase
         .from('bookings')
         .update({
@@ -72,6 +73,7 @@ export default function BookingManagement({ booking, onUpdate }: BookingManageme
 
     setLoading(true)
     try {
+      const supabase = createClient()
       const { error } = await supabase
         .from('bookings')
         .update({ status: 'cancelled' })
