@@ -167,6 +167,3 @@ export default function AuthButton() {
     </div>
   )
 }
-    )
-  }
-}
