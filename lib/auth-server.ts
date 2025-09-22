@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import * as SupabaseAuthHelpers from '@supabase/auth-helpers-nextjs'
+import { createServerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import { Database } from './supabase'
 
@@ -26,7 +26,7 @@ export function createServerSupabaseClient() {
     throw new Error('Missing Supabase environment variables for server client')
   }
   
-  return SupabaseAuthHelpers.createServerClient<Database>(
+  return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
