@@ -31,7 +31,10 @@ export default function AuthButton() {
           setUser(response.data)
         }
       } catch (error) {
-        logError(error, 'Get Profile')
+        // Don't log authentication errors as they're expected for non-logged-in users
+        if (error instanceof Error && !error.message.includes('Authentication required')) {
+          logError(error, 'Get Profile')
+        }
         setUser(null)
       } finally {
         setInitialLoading(false)

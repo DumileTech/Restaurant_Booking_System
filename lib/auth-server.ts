@@ -32,18 +32,23 @@ export function createServerSupabaseClient() {
 // Get current user from session
 export async function getCurrentUser() {
   const supabase = createServerSupabaseClient()
-  const { data: { user }, error } = await supabase.auth.getUser()
+  try {
+    const { data: { user }, error } = await supabase.auth.getUser()
   
-  if (error || !user) return null
+    if (error || !user) return null
   
-  // Get user profile with role
-  const { data: profile } = await supabaseAdmin
-    .from('users')
-    .select('*')
-    .eq('id', user.id)
-    .single()
+    // Get user profile with role
+    const { data: profile } = await supabaseAdmin
+      .from('users')
+      .select('*')
+      .eq('id', user.id)
+      .single()
   
-  return profile
+    return profile
+  } catch (error) {
+    console.error('Error getting current user:', error)
+    return null
+  }
 }
 // User roles
 // Get server user by ID
