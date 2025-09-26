@@ -1,10 +1,26 @@
 'use server'
 
-import { supabaseAdmin, createServerSupabaseClient } from '@/lib/auth-server'
+import { supabaseAdmin } from '@/lib/auth-server'
+import { createClient } from '@supabase/supabase-js'
+import { cookies } from 'next/headers'
 import { validateAuth } from '@/lib/utils/validation'
 import { handleApiError, AuthenticationError, ValidationError } from '@/lib/utils/errors'
 import { sanitizeString, sanitizeEmail } from '@/lib/utils/validation'
 
+// Create server client for handling user sessions  
+function createServerSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookies().get(name)?.value
+        },
+      },
+    }
+  )
+}
 export async function registerUser(formData: FormData) {
   try {
     const email = formData.get('email') as string
