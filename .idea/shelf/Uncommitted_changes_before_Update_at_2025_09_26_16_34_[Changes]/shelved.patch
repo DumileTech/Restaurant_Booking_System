@@ -1,0 +1,36 @@
+Index: .env.local
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+># Supabase Configuration\r\n# Replace these with your actual Supabase project credentials\r\n\r\nNEXT_PUBLIC_SUPABASE_URL=https://jaylcuvsaucgnmhmwynr.supabase.co\r\n\r\nNEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpheWxjdXZzYXVjZ25taG13eW5yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1Mzk5OTQsImV4cCI6MjA3NDExNTk5NH0.X2UcpArHWSraI0smAIpPH4ErA_AkT0gdfBtkapc0NJ0\r\n\r\nSUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpheWxjdXZzYXVjZ25taG13eW5yIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1ODUzOTk5NCwiZXhwIjoyMDc0MTE1OTk0fQ.V5Zas8jPfyJj5wbgC2SD4R6FS9A8Gg2n_BFZPdRZbUE\r\n\r\n# Resender API Key for email notifications\r\nRESEND_API_KEY=re_xYPwTpGD_JxEqRbnXMS4Jx6D5mqdYH3si\r\n\r\n# Disable Google Fonts optimization to prevent build-time network issues\r\nNEXT_FONT_GOOGLE_OPTIMIZE_FILE=false
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.env.local b/.env.local
+--- a/.env.local	(revision 7c20f1bac679023ed92ea75a9b94874e59c0e983)
++++ b/.env.local	(date 1758886318114)
+@@ -6,6 +6,7 @@
+ NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpheWxjdXZzYXVjZ25taG13eW5yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1Mzk5OTQsImV4cCI6MjA3NDExNTk5NH0.X2UcpArHWSraI0smAIpPH4ErA_AkT0gdfBtkapc0NJ0
+ 
+ SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpheWxjdXZzYXVjZ25taG13eW5yIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1ODUzOTk5NCwiZXhwIjoyMDc0MTE1OTk0fQ.V5Zas8jPfyJj5wbgC2SD4R6FS9A8Gg2n_BFZPdRZbUE
++  RESEND_API_KEY=re_xYPwTpGD_JxEqRbnXMS4Jx6D5mqdYH3si
+ 
+ # Resender API Key for email notifications
+ RESEND_API_KEY=re_xYPwTpGD_JxEqRbnXMS4Jx6D5mqdYH3si
+Index: .idea/.gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/.gitignore b/.idea/.gitignore
+new file mode 100644
+--- /dev/null	(date 1758886318136)
++++ b/.idea/.gitignore	(date 1758886318136)
+@@ -0,0 +1,8 @@
++# Default ignored files
++/shelf/
++/workspace.xml
++# Editor-based HTTP Client requests
++/httpRequests/
++# Datasource local storage ignored files
++/dataSources/
++/dataSources.local.xml
