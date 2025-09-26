@@ -1,13 +1,14 @@
-import { supabase } from '@/lib/supabase'
 import AdminDashboard from '@/components/admin/AdminDashboard'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import { createClient } from '@/utils/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
 export default async function AdminPage() {
+  const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   
   if (!user) {

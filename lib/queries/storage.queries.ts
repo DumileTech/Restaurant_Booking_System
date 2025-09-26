@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/utils/supabase/server'
 
 // Upload file to storage
 export async function uploadFile(
@@ -11,6 +11,7 @@ export async function uploadFile(
     upsert?: boolean
   }
 ) {
+  const supabase = await createClient()
   const { data, error } = await supabase.storage
     .from(bucket)
     .upload(path, file, {
@@ -25,6 +26,7 @@ export async function uploadFile(
 
 // Download file from storage
 export async function downloadFile(bucket: string, path: string) {
+  const supabase = await createClient()
   const { data, error } = await supabase.storage
     .from(bucket)
     .download(path)
@@ -35,6 +37,7 @@ export async function downloadFile(bucket: string, path: string) {
 
 // Get public URL for file
 export async function getPublicUrl(bucket: string, path: string) {
+  const supabase = await createClient()
   const { data } = supabase.storage
     .from(bucket)
     .getPublicUrl(path)
@@ -48,6 +51,7 @@ export async function getSignedUrl(
   path: string,
   expiresIn: number = 3600
 ) {
+  const supabase = await createClient()
   const { data, error } = await supabase.storage
     .from(bucket)
     .createSignedUrl(path, expiresIn)
@@ -66,6 +70,7 @@ export async function listFiles(
     sortBy?: { column: string; order: 'asc' | 'desc' }
   }
 ) {
+  const supabase = await createClient()
   const { data, error } = await supabase.storage
     .from(bucket)
     .list(path, {
@@ -80,6 +85,7 @@ export async function listFiles(
 
 // Delete file from storage
 export async function deleteFile(bucket: string, paths: string[]) {
+  const supabase = await createClient()
   const { data, error } = await supabase.storage
     .from(bucket)
     .remove(paths)
@@ -94,6 +100,7 @@ export async function moveFile(
   fromPath: string,
   toPath: string
 ) {
+  const supabase = await createClient()
   const { data, error } = await supabase.storage
     .from(bucket)
     .move(fromPath, toPath)
@@ -108,6 +115,7 @@ export async function copyFile(
   fromPath: string,
   toPath: string
 ) {
+  const supabase = await createClient()
   const { data, error } = await supabase.storage
     .from(bucket)
     .copy(fromPath, toPath)
@@ -131,7 +139,7 @@ export async function uploadRestaurantImage(
 
   if (error) throw error
 
-  const publicUrl = getPublicUrl('restaurant-images', filePath)
+  const publicUrl = await getPublicUrl('restaurant-images', filePath)
   return { ...data, publicUrl }
 }
 
@@ -180,8 +188,8 @@ export async function getRestaurantImages(restaurantId: string) {
     file.name.startsWith(restaurantId)
   )
 
-  return restaurantFiles.map(file => ({
+  return Promise.all(restaurantFiles.map(async file => ({
     ...file,
-    publicUrl: getPublicUrl('restaurant-images', `restaurants/${file.name}`)
-  }))
+    publicUrl: await getPublicUrl('restaurant-images', `restaurants/${file.name}`)
+  })))
 }

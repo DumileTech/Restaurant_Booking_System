@@ -1,4 +1,3 @@
-import { supabase } from '@/lib/supabase'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -8,10 +7,12 @@ import RewardsHistory from '@/components/rewards/RewardsHistory'
 import { Award, Calendar, Clock, MapPin, Star } from 'lucide-react'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { createClient } from '@/utils/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
 async function getUserData(userId: string) {
+  const supabase = await createClient({ useServiceRole: true })
   const [userResult, bookingsResult, rewardsResult] = await Promise.all([
     supabase
       .from('users')
@@ -46,6 +47,7 @@ async function getUserData(userId: string) {
 }
 
 export default async function AccountPage({ searchParams }: { searchParams: { success?: string } }) {
+  const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   
   if (!user) {

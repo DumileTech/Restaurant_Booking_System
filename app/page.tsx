@@ -1,12 +1,13 @@
-import { supabase } from '@/lib/supabase'
 import ClientRestaurantList from '@/components/restaurants/ClientRestaurantList'
 import AuthButton from '@/components/auth/AuthButton'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Star, Award, MapPin } from 'lucide-react'
+import { createClient } from '@/utils/supabase/server'
 
 async function getRestaurants() {
   try {
+    const supabase = await createClient()
     const { data: restaurants, error } = await supabase
       .from('restaurants')
       .select('*')
@@ -27,6 +28,7 @@ async function getRestaurants() {
 
 async function getFilterOptions() {
   try {
+    const supabase = await createClient()
     const { data: restaurants, error } = await supabase
       .from('restaurants')
       .select('cuisine, location')
