@@ -88,6 +88,11 @@ export function handleApiError(error: unknown): { message: string; statusCode: n
 }
 
 export function logError(error: unknown, context?: string) {
+  // Skip logging expected authentication errors to reduce console noise
+  if (error instanceof AuthenticationError) {
+    return
+  }
+
   const timestamp = new Date().toISOString()
   const contextStr = context ? `[${context}] ` : ''
   
