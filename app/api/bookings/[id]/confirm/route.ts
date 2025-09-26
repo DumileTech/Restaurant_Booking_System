@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin, getCurrentUser, canAccessRestaurant } from '@/lib/auth-server'
+import { sendBookingConfirmationEmail } from '@/lib/email-triggers'
 
 export async function POST(
   request: NextRequest,
@@ -50,6 +51,11 @@ export async function POST(
         { status: 500 }
       )
     }
+
+    // Send confirmation email
+    sendBookingConfirmationEmail(params.id).catch(error => {
+      console.error('Failed to send booking confirmation email:', error)
+    })
 
     return NextResponse.json({ 
       message: 'Booking confirmed successfully',

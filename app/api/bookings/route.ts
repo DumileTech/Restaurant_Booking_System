@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin, getCurrentUser } from '@/lib/auth-server'
 import { validateBooking } from '@/lib/utils/validation'
 import { handleApiError, AuthenticationError, ValidationError } from '@/lib/utils/errors'
+import { sendBookingConfirmationEmail } from '@/lib/email-triggers'
 
 export const dynamic = 'force-dynamic'
 
@@ -69,6 +70,23 @@ export async function POST(request: NextRequest) {
         },
         { status: 400 }
       )
+    }
+
+    // Send confirmation email if booking was auto-confirmed
+    if (result.booking_id) {
+      // Check if booking was confirmed
+      const { data: createdBooking } = await supabaseAdmin
+        .from('bookings')
+        .select('status')
+        .eq('id', result.booking_id)
+        .single()
+
+      if (createdBooking?.status === 'confirmed') {
+        // Send confirmation email asynchronously
+        sendBookingConfirmationEmail(result.booking_id).catch(error => {
+          console.error('Failed to send booking confirmation email:', error)
+        })
+      }
     }
 
     return NextResponse.json({

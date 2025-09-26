@@ -39,6 +39,10 @@ A comprehensive restaurant booking system built with Next.js, Supabase, and Type
 - Automated email triggers
 - Email history tracking
 - Template-based notifications
+- **Resender Integration**: Professional email delivery service
+- **Automated Reminders**: Daily booking reminders via cron jobs
+- **Monthly Summaries**: Reward point summaries for active users
+- **Beautiful Templates**: HTML email templates with responsive design
 
 ## Tech Stack
 
@@ -48,6 +52,7 @@ A comprehensive restaurant booking system built with Next.js, Supabase, and Type
 - **Database**: PostgreSQL with Row Level Security
 - **Authentication**: Supabase Auth
 - **Storage**: Supabase Storage with bucket policies
+- **Email Service**: Resender for transactional emails
 
 ## Getting Started
 
@@ -80,6 +85,8 @@ Add your Supabase credentials:
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+RESEND_API_KEY=your_resend_api_key
+CRON_SECRET=your_cron_secret_for_scheduled_jobs
 ```
 
 4. Run database migrations:
@@ -138,6 +145,37 @@ npm run dev
 - **Monthly Rewards** (1st of month 10:00 AM): Send monthly rewards summaries
 - **User Engagement** (Daily 3:00 AM): Update user engagement metrics
 - **Database Optimization** (Sundays 1:00 AM): Analyze tables and optimize performance
+
+### Email Service Integration
+
+The system uses **Resender** for reliable email delivery:
+
+#### Email Types
+- **Booking Confirmations**: Sent when bookings are confirmed
+- **Booking Reminders**: Sent 24 hours before reservation
+- **Monthly Summaries**: Monthly reward point summaries
+
+#### Manual Email Triggers
+```bash
+# Send booking reminders manually
+curl -X POST http://localhost:3000/api/cron/reminders
+
+# Send monthly summaries manually  
+curl -X POST http://localhost:3000/api/cron/monthly-summary
+
+# Send custom email via API
+curl -X POST http://localhost:3000/api/email/send \
+  -H "Content-Type: application/json" \
+  -d '{"type": "booking_confirmation", "data": {...}}'
+```
+
+#### Email Templates
+All emails use responsive HTML templates with:
+- Professional TableRewards branding
+- Mobile-friendly responsive design
+- Clear call-to-actions and booking details
+- South African date/time formatting
+
 ## Supabase CLI Operations
 
 This project includes a comprehensive CLI tool for managing all Supabase operations:
