@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { apiClient } from '@/lib/api-client'
+import { registerUser } from '@/lib/actions/auth.actions'
 import { validateAuth } from '@/lib/utils/validation'
 import { logError } from '@/lib/utils/errors'
 import { AlertCircle, CheckCircle, Eye, EyeOff, User, Mail, Lock } from 'lucide-react'
@@ -122,11 +122,12 @@ export default function SignUpForm() {
         return
       }
 
-      const response = await apiClient.register(
-        formData.email.trim(),
-        formData.password,
-        formData.name.trim()
-      )
+      const formDataObj = new FormData()
+      formDataObj.append('email', formData.email.trim())
+      formDataObj.append('password', formData.password)
+      formDataObj.append('name', formData.name.trim())
+      
+      const response = await registerUser(formDataObj)
       
       if (response.success) {
         setMessage('Account created successfully! You can now sign in.')

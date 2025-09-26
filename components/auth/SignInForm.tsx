@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { apiClient } from '@/lib/api-client'
+import { loginUser } from '@/lib/actions/auth.actions'
 import { validateAuth } from '@/lib/utils/validation'
 import { logError } from '@/lib/utils/errors'
 import { AlertCircle, CheckCircle, Eye, EyeOff, Mail, Lock } from 'lucide-react'
@@ -99,10 +99,11 @@ export default function SignInForm() {
         return
       }
 
-      const response = await apiClient.login(
-        formData.email.trim(),
-        formData.password
-      )
+      const formDataObj = new FormData()
+      formDataObj.append('email', formData.email.trim())
+      formDataObj.append('password', formData.password)
+      
+      const response = await loginUser(formDataObj)
       
       if (response.success && response.data) {
         setMessage('Sign in successful! Redirecting...')

@@ -2,39 +2,25 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card } from '@/components/ui/card'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { apiClient } from '@/lib/api-client'
-import { validateAuth } from '@/lib/utils/validation'
-import { logError } from '@/lib/utils/errors'
+import { getUserProfile } from '@/lib/actions/user.actions'
+import { logoutUser } from '@/lib/actions/auth.actions'
 import type { User } from '@/lib/types'
 import { LogIn, LogOut, User as UserIcon } from 'lucide-react'
 
 
 export default function AuthButton() {
   const [user, setUser] = useState<User | null>(null)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [name, setName] = useState('')
-  const [isRegistering, setIsRegistering] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState('')
-  const [isOpen, setIsOpen] = useState(false)
   const [initialLoading, setInitialLoading] = useState(true)
 
   useEffect(() => {
     const getProfile = async () => {
       try {
-        const response = await apiClient.getProfile()
+        const response = await getUserProfile()
         if (response.success && response.data) {
           setUser(response.data)
         }
       } catch (error) {
-        // Don't log authentication errors as they're expected for non-logged-in users
-        if (error instanceof Error && !error.message.includes('Authentication required')) {
-          logError(error, 'Get Profile')
-        }
         setUser(null)
       } finally {
         setInitialLoading(false)
@@ -44,87 +30,18 @@ export default function AuthButton() {
     getProfile()
   }, [])
 
-  const handleAuth = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    if (loading) return
-    
-    setLoading(true)
-    setMessage('')
-
-    try {
-      // Validate input
-      const validation = validateAuth({ 
-        email, 
-        password, 
-        ...(isRegistering && { name }) 
-      })
-      
-      if (!validation.success) {
-        const errorMessage = validation.errors?.[0]?.message || 'Invalid input'
-        setMessage(errorMessage)
-        return
-      }
-
-      if (isRegistering) {
-        const response = await apiClient.register(email, password, name)
-        if (response.success) {
-          setMessage('Registration successful! Please sign in.')
-          setIsRegistering(false)
-          setName('')
-          setPassword('')
-        } else {
-          setMessage(response.error || 'Registration failed')
-        }
-      } else {
-        const response = await apiClient.login(email, password)
-        if (response.success && response.data) {
-          setUser(response.data)
-          setIsOpen(false)
-          setMessage('')
-          setEmail('')
-          setPassword('')
-        } else {
-          setMessage(response.error || 'Login failed')
-        }
-      }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'An error occurred'
-      setMessage(errorMessage)
-      logError(error, isRegistering ? 'Registration' : 'Login')
-    } finally {
-      setLoading(false)
-    }
-  }
-
   const handleSignOut = async () => {
     if (loading) return
     
     setLoading(true)
     try {
-      await apiClient.logout()
+      await logoutUser()
       setUser(null)
     } catch (error) {
-      logError(error, 'Logout')
       // Still clear user state even if logout request fails
       setUser(null)
     } finally {
       setLoading(false)
-    }
-  }
-
-  const resetForm = () => {
-    setEmail('')
-    setPassword('')
-    setName('')
-    setMessage('')
-    setIsRegistering(false)
-  }
-
-  const handleDialogClose = (open: boolean) => {
-    setIsOpen(open)
-    if (!open) {
-      resetForm()
     }
   }
 

@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { supabase } from '@/lib/supabase'
+import { confirmBooking, cancelBooking } from '@/lib/actions/booking.actions'
+import { supabaseAdmin } from '@/lib/auth-server'
 import { CheckCircle, XCircle, Clock, Users, Calendar, MapPin } from 'lucide-react'
 
 interface Restaurant {
@@ -48,7 +49,7 @@ export default function AdminDashboard({ restaurants }: AdminDashboardProps) {
   const fetchBookings = async () => {
     setLoading(true)
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from('bookings')
         .select(`
           *,
@@ -70,12 +71,19 @@ export default function AdminDashboard({ restaurants }: AdminDashboardProps) {
 
   const updateBookingStatus = async (bookingId: string, status: string) => {
     try {
-      const { error } = await supabase
-        .from('bookings')
-        .update({ status })
-        .eq('id', bookingId)
+      let response
+      if (status === 'confirmed') {
+        response = await confirmBooking(bookingId)
+      } else if (status === 'cancelled') {
+        response = await cancelBooking(bookingId)
+      } else {
+        throw new Error('Invalid status')
+      }
 
-      if (error) throw error
+      if (!response.success) {
+        throw new Error(response.error)
+      }
+      
       await fetchBookings() // Refresh the list
     } catch (error) {
       console.error('Error updating booking:', error)

@@ -7,7 +7,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { apiClient } from '@/lib/api-client'
+import { createBooking } from '@/lib/actions/booking.actions'
+import { getRestaurantAvailability } from '@/lib/actions/restaurant.actions'
 import { validateBooking } from '@/lib/utils/validation'
 import { logError } from '@/lib/utils/errors'
 import type { Restaurant, BookingFormData } from '@/lib/types'
@@ -54,7 +55,7 @@ export default function BookingForm({ restaurant }: BookingFormProps) {
     setError('')
     
     try {
-      const response = await apiClient.getRestaurantAvailability(
+      const response = await getRestaurantAvailability(
         restaurant.id,
         formData.date,
         parseInt(formData.party_size)
@@ -108,7 +109,14 @@ export default function BookingForm({ restaurant }: BookingFormProps) {
         return
       }
 
-      const response = await apiClient.createBooking(bookingData)
+      const formDataObj = new FormData()
+      formDataObj.append('restaurant_id', restaurant.id)
+      formDataObj.append('date', formData.date)
+      formDataObj.append('time', formData.time)
+      formDataObj.append('party_size', formData.party_size)
+      formDataObj.append('special_requests', formData.special_requests)
+      
+      const response = await createBooking(formDataObj)
       
       if (response.success) {
         router.push('/account?success=booking')

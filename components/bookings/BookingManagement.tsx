@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { supabase } from '@/lib/supabase'
+import { updateBooking, cancelBooking } from '@/lib/actions/booking.actions'
 import { Calendar, Clock, Users, Edit, Trash2, AlertCircle } from 'lucide-react'
 
 interface Booking {
@@ -47,17 +47,16 @@ export default function BookingManagement({ booking, onUpdate }: BookingManageme
   const handleUpdate = async () => {
     setLoading(true)
     try {
-      const { error } = await supabase
-        .from('bookings')
-        .update({
-          date: formData.date,
-          time: formData.time,
-          party_size: parseInt(formData.party_size),
-          special_requests: formData.special_requests || null,
-        })
-        .eq('id', booking.id)
+      const response = await updateBooking(booking.id, {
+        date: formData.date,
+        time: formData.time,
+        party_size: parseInt(formData.party_size),
+        special_requests: formData.special_requests || null,
+      })
 
-      if (error) throw error
+      if (!response.success) {
+        throw new Error(response.error)
+      }
 
       setIsEditing(false)
       onUpdate()
@@ -72,12 +71,12 @@ export default function BookingManagement({ booking, onUpdate }: BookingManageme
 
     setLoading(true)
     try {
-      const { error } = await supabase
-        .from('bookings')
-        .update({ status: 'cancelled' })
-        .eq('id', booking.id)
+      const response = await cancelBooking(booking.id)
 
-      if (error) throw error
+      if (!response.success) {
+        throw new Error(response.error)
+      }
+      
       onUpdate()
     } catch (error: any) {
       alert('Error cancelling booking: ' + error.message)
