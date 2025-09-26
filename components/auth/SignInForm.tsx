@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label'
 import { loginUser } from '@/lib/actions/auth.actions'
 import { validateAuth } from '@/lib/utils/validation'
 import { logError } from '@/lib/utils/errors'
-import { AlertCircle, CheckCircle, Eye, EyeOff, Mail, Lock } from 'lucide-react'
+import { CircleAlert as AlertCircle, CircleCheck as CheckCircle, Eye, EyeOff, Mail, Lock } from 'lucide-react'
 
 export default function SignInForm() {
   const router = useRouter()

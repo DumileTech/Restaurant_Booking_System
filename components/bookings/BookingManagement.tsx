@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { updateBooking, cancelBooking } from '@/lib/actions/booking.actions'
-import { Calendar, Clock, Users, Edit, Trash2, AlertCircle } from 'lucide-react'
+import { Calendar, Clock, Users, CreditCard as Edit, Trash2, CircleAlert as AlertCircle } from 'lucide-react'
 
 interface Booking {
   id: string

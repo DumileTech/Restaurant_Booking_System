@@ -13,7 +13,7 @@ import { validateBooking } from '@/lib/utils/validation'
 import { logError } from '@/lib/utils/errors'
 import type { Restaurant, BookingFormData } from '@/lib/types'
 import { useRouter } from 'next/navigation'
-import { Calendar, Clock, Users, AlertCircle } from 'lucide-react'
+import { Calendar, Clock, Users, CircleAlert as AlertCircle } from 'lucide-react'
 
 
 interface BookingFormProps {

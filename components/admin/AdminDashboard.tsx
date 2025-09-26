@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { confirmBooking, cancelBooking } from '@/lib/actions/booking.actions'
 import { supabaseAdmin } from '@/lib/auth-server'
-import { CheckCircle, XCircle, Clock, Users, Calendar, MapPin } from 'lucide-react'
+import { CircleCheck as CheckCircle, Circle as XCircle, Clock, Users, Calendar, MapPin } from 'lucide-react'
 
 interface Restaurant {
   id: string
