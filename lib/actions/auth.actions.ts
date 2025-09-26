@@ -1,26 +1,11 @@
 'use server'
 
 import { supabaseAdmin } from '@/lib/auth-server'
-import { createClient } from '@supabase/supabase-js'
-import { cookies } from 'next/headers'
+import { createClient } from '@/utils/supabase/server'
 import { validateAuth } from '@/lib/utils/validation'
 import { handleApiError, AuthenticationError, ValidationError } from '@/lib/utils/errors'
 import { sanitizeString, sanitizeEmail } from '@/lib/utils/validation'
 
-// Create server client for handling user sessions  
-function createServerSupabaseClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookies().get(name)?.value
-        },
-      },
-    }
-  )
-}
 export async function registerUser(formData: FormData) {
   try {
     const email = formData.get('email') as string
@@ -41,6 +26,7 @@ export async function registerUser(formData: FormData) {
     const sanitizedName = name ? sanitizeString(name) : ''
 
     // Create user with Supabase Auth
+    const supabaseAdmin = await createClient({ useServiceRole: true })
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email: sanitizedEmail,
       password,
@@ -104,7 +90,7 @@ export async function loginUser(formData: FormData) {
       }
     }
 
-    const supabase = createServerSupabaseClient()
+    const supabase = await createClient()
     
     // Sign in user with Supabase auth
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -117,7 +103,8 @@ export async function loginUser(formData: FormData) {
     }
 
     // Get user profile with role
-    const { data: profile } = await supabase
+    const supabaseAdmin = await createClient({ useServiceRole: true })
+    const { data: profile } = await supabaseAdmin
       .from('users')
       .select('*')
       .eq('id', data.user.id)
@@ -146,7 +133,7 @@ export async function loginUser(formData: FormData) {
 
 export async function logoutUser() {
   try {
-    const supabase = createServerSupabaseClient()
+    const supabase = await createClient()
     await supabase.auth.signOut()
     
     return {

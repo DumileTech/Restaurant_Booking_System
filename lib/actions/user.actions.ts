@@ -1,8 +1,7 @@
 'use server'
 
 import { supabaseAdmin } from '@/lib/auth-server'
-import { createClient } from '@supabase/supabase-js'
-import { cookies } from 'next/headers'
+import { createClient } from '@/utils/supabase/server'
 import { validateUser } from '@/lib/utils/validation'
 import { handleApiError, AuthenticationError } from '@/lib/utils/errors'
 import { sanitizeString } from '@/lib/utils/validation'
@@ -10,17 +9,7 @@ import { revalidatePath } from 'next/cache'
 
 // Get current user from session
 async function getCurrentUser() {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookies().get(name)?.value
-        },
-      },
-    }
-  )
+  const supabase = await createClient()
   
   try {
     const { data: { user }, error } = await supabase.auth.getUser()
@@ -28,6 +17,7 @@ async function getCurrentUser() {
     if (error || !user) return null
   
     // Get user profile with role
+    const supabaseAdmin = await createClient({ useServiceRole: true })
     const { data: profile } = await supabaseAdmin
       .from('users')
       .select('*')
@@ -82,6 +72,7 @@ export async function updateUserProfile(formData: FormData) {
     // Sanitize name
     const sanitizedName = sanitizeString(name)
 
+    const supabaseAdmin = await createClient({ useServiceRole: true })
     const { data: updated, error } = await supabaseAdmin
       .from('users')
       .update({ name: sanitizedName })
@@ -116,6 +107,7 @@ export async function getUserBookings() {
       throw new AuthenticationError()
     }
 
+    const supabaseAdmin = await createClient({ useServiceRole: true })
     const { data: bookings, error } = await supabaseAdmin
       .from('bookings')
       .select(`
@@ -155,6 +147,7 @@ export async function getUserRewards() {
       throw new AuthenticationError()
     }
 
+    const supabaseAdmin = await createClient({ useServiceRole: true })
     const { data: rewards, error } = await supabaseAdmin
       .from('rewards')
       .select('*')

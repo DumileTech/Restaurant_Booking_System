@@ -1,5 +1,6 @@
 'use server'
 
+import { createClient } from '@/utils/supabase/server'
 import { supabaseAdmin } from '@/lib/auth-server'
 import { handleApiError } from '@/lib/utils/errors'
 
@@ -9,7 +10,8 @@ export async function getRestaurants(filters?: {
   search?: string
 }) {
   try {
-    let query = supabaseAdmin.from('restaurants').select('*')
+    const supabase = await createClient({ useServiceRole: true })
+    let query = supabase.from('restaurants').select('*')
 
     if (filters?.cuisine) {
       query = query.eq('cuisine', filters.cuisine)
@@ -45,7 +47,8 @@ export async function getRestaurants(filters?: {
 
 export async function getRestaurant(id: string) {
   try {
-    const { data: restaurant, error } = await supabaseAdmin
+    const supabase = await createClient({ useServiceRole: true })
+    const { data: restaurant, error } = await supabase
       .from('restaurants')
       .select('*')
       .eq('id', id)
@@ -83,7 +86,8 @@ export async function getRestaurantAvailability(
       throw new Error('Party size must be between 1 and 20')
     }
 
-    const { data: availability, error } = await supabaseAdmin
+    const supabase = await createClient({ useServiceRole: true })
+    const { data: availability, error } = await supabase
       .rpc('get_restaurant_availability', {
         restaurant_id_param: id,
         date_param: date,

@@ -1,25 +1,14 @@
 'use server'
 
 import { supabaseAdmin } from '@/lib/auth-server'
-import { createClient } from '@supabase/supabase-js'
-import { cookies } from 'next/headers'
+import { createClient } from '@/utils/supabase/server'
 import { validateBooking } from '@/lib/utils/validation'
 import { handleApiError, AuthenticationError, ValidationError } from '@/lib/utils/errors'
 import { revalidatePath } from 'next/cache'
 
 // Get current user from session
 async function getCurrentUser() {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookies().get(name)?.value
-        },
-      },
-    }
-  )
+  const supabase = await createClient()
   
   try {
     const { data: { user }, error } = await supabase.auth.getUser()
@@ -27,6 +16,7 @@ async function getCurrentUser() {
     if (error || !user) return null
   
     // Get user profile with role
+    const supabaseAdmin = await createClient({ useServiceRole: true })
     const { data: profile } = await supabaseAdmin
       .from('users')
       .select('*')
@@ -72,6 +62,7 @@ export async function createBooking(formData: FormData) {
     }
 
     // Verify restaurant exists
+    const supabaseAdmin = await createClient({ useServiceRole: true })
     const { data: restaurant, error: restaurantError } = await supabaseAdmin
       .from('restaurants')
       .select('id, name, capacity')
@@ -141,6 +132,7 @@ export async function updateBookingStatus(bookingId: string, status: 'confirmed'
     }
 
     // Get booking to check permissions
+    const supabaseAdmin = await createClient({ useServiceRole: true })
     const { data: booking } = await supabaseAdmin
       .from('bookings')
       .select('user_id, restaurant_id')
@@ -216,6 +208,7 @@ export async function updateBooking(bookingId: string, updates: {
     }
 
     // Get booking to check permissions
+    const supabaseAdmin = await createClient({ useServiceRole: true })
     const { data: booking } = await supabaseAdmin
       .from('bookings')
       .select('user_id, restaurant_id')

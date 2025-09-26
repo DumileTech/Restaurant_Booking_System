@@ -1,10 +1,8 @@
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { NextResponse, type NextRequest } from 'next/server'
+import { createClient } from './utils/supabase/middleware'
 
 export async function middleware(req: NextRequest) {
-  const res = NextResponse.next()
-  const supabase = createMiddlewareClient({ req, res })
+  const { supabase, response } = createClient(req)
 
   // Refresh session if expired - required for Server Components
   const {
@@ -33,7 +31,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL('/account', req.url))
   }
 
-  return res
+  return response
 }
 
 export const config = {

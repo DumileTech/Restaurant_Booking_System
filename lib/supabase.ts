@@ -1,35 +1,6 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient as createBrowserClient } from '../utils/supabase/client'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  const missing = []
-  if (!supabaseUrl) missing.push('NEXT_PUBLIC_SUPABASE_URL')
-  if (!supabaseAnonKey) missing.push('NEXT_PUBLIC_SUPABASE_ANON_KEY')
-  
-  throw new Error(`Missing Supabase environment variables: ${missing.join(', ')}`)
-}
-
-// Validate URL format
-try {
-  new URL(supabaseUrl)
-} catch {
-  throw new Error('Invalid Supabase URL format')
-}
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true
-  },
-  global: {
-    headers: {
-      'X-Client-Info': 'tablerewards-web'
-    }
-  }
-})
+export const supabase = createBrowserClient()
 
 export type Database = {
   public: {
