@@ -1,9 +1,4 @@
 import { supabase } from '@/lib/supabase'
-import { Database } from '@/lib/supabase'
-
-type Booking = Database['public']['Tables']['bookings']['Row']
-type BookingInsert = Database['public']['Tables']['bookings']['Insert']
-type BookingUpdate = Database['public']['Tables']['bookings']['Update']
 
 // Get all bookings for a user
 export async function getUserBookings(userId: string) {

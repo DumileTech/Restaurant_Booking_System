@@ -1,9 +1,4 @@
 import { supabase } from '@/lib/supabase'
-import { Database } from '@/lib/supabase'
-
-type User = Database['public']['Tables']['users']['Row']
-type UserInsert = Database['public']['Tables']['users']['Insert']
-type UserUpdate = Database['public']['Tables']['users']['Update']
 
 // Get user by ID
 export async function getUserById(id: string) {
@@ -65,16 +60,6 @@ export async function updateUserPoints(id: string, points: number) {
   return data
 }
 
-// Add points to user
-export async function addPointsToUser(id: string, pointsToAdd: number) {
-  const { data, error } = await supabase.rpc('add_user_points', {
-    user_id: id,
-    points_to_add: pointsToAdd
-  })
-
-  if (error) throw error
-  return data
-}
 
 // Get user rewards history
 export async function getUserRewards(userId: string) {

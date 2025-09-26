@@ -174,7 +174,7 @@ export async function uploadRestaurantDocument(
 
 // Get restaurant images
 export async function getRestaurantImages(restaurantId: string) {
-  const files = await listFiles('restaurant-images', `restaurants`)
+  const files = await listFiles('restaurant-images', 'restaurants')
   
   const restaurantFiles = files.filter(file => 
     file.name.startsWith(restaurantId)

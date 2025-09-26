@@ -1,11 +1,10 @@
 'use server'
 
-import { supabaseAdmin, createServerSupabaseClient } from '@/lib/auth-server'
+import { supabaseAdmin } from '@/lib/auth-server'
+import { createClient } from '@/utils/supabase/server'
 import { validateAuth } from '@/lib/utils/validation'
 import { handleApiError, AuthenticationError, ValidationError } from '@/lib/utils/errors'
 import { sanitizeString, sanitizeEmail } from '@/lib/utils/validation'
-import { redirect } from 'next/navigation'
-import { cookies } from 'next/headers'
 
 export async function registerUser(formData: FormData) {
   try {
@@ -27,6 +26,7 @@ export async function registerUser(formData: FormData) {
     const sanitizedName = name ? sanitizeString(name) : ''
 
     // Create user with Supabase Auth
+    const supabaseAdmin = await createClient({ useServiceRole: true })
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email: sanitizedEmail,
       password,
@@ -90,7 +90,7 @@ export async function loginUser(formData: FormData) {
       }
     }
 
-    const supabase = createServerSupabaseClient()
+    const supabase = await createClient()
     
     // Sign in user with Supabase auth
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -103,7 +103,8 @@ export async function loginUser(formData: FormData) {
     }
 
     // Get user profile with role
-    const { data: profile } = await supabase
+    const supabaseAdmin = await createClient({ useServiceRole: true })
+    const { data: profile } = await supabaseAdmin
       .from('users')
       .select('*')
       .eq('id', data.user.id)
@@ -132,7 +133,7 @@ export async function loginUser(formData: FormData) {
 
 export async function logoutUser() {
   try {
-    const supabase = createServerSupabaseClient()
+    const supabase = await createClient()
     await supabase.auth.signOut()
     
     return {

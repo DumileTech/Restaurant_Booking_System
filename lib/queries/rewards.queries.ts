@@ -1,8 +1,4 @@
 import { supabase } from '@/lib/supabase'
-import { Database } from '@/lib/supabase'
-
-type Reward = Database['public']['Tables']['rewards']['Row']
-type RewardInsert = Database['public']['Tables']['rewards']['Insert']
 
 // Get all rewards for a user
 export async function getUserRewards(userId: string) {

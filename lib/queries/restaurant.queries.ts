@@ -1,9 +1,4 @@
 import { supabase } from '@/lib/supabase'
-import { Database } from '@/lib/supabase'
-
-type Restaurant = Database['public']['Tables']['restaurants']['Row']
-type RestaurantInsert = Database['public']['Tables']['restaurants']['Insert']
-type RestaurantUpdate = Database['public']['Tables']['restaurants']['Update']
 
 // Get all restaurants with optional filters
 export async function getAllRestaurants(filters?: {

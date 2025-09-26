@@ -1,10 +1,34 @@
 'use server'
 
-import { supabaseAdmin, getCurrentUser } from '@/lib/auth-server'
+import { supabaseAdmin } from '@/lib/auth-server'
+import { createClient } from '@/utils/supabase/server'
 import { validateBooking } from '@/lib/utils/validation'
 import { handleApiError, AuthenticationError, ValidationError } from '@/lib/utils/errors'
-import { sendBookingConfirmationEmail } from '@/lib/email-triggers'
 import { revalidatePath } from 'next/cache'
+
+// Get current user from session
+async function getCurrentUser() {
+  const supabase = await createClient()
+  
+  try {
+    const { data: { user }, error } = await supabase.auth.getUser()
+  
+    if (error || !user) return null
+  
+    // Get user profile with role
+    const supabaseAdmin = await createClient({ useServiceRole: true })
+    const { data: profile } = await supabaseAdmin
+      .from('users')
+      .select('*')
+      .eq('id', user.id)
+      .single()
+  
+    return profile
+  } catch (error) {
+    console.error('Error getting current user:', error)
+    return null
+  }
+}
 
 export async function createBooking(formData: FormData) {
   try {
@@ -38,6 +62,7 @@ export async function createBooking(formData: FormData) {
     }
 
     // Verify restaurant exists
+    const supabaseAdmin = await createClient({ useServiceRole: true })
     const { data: restaurant, error: restaurantError } = await supabaseAdmin
       .from('restaurants')
       .select('id, name, capacity')
@@ -79,11 +104,7 @@ export async function createBooking(formData: FormData) {
         .eq('id', result.booking_id)
         .single()
 
-      if (createdBooking?.status === 'confirmed') {
-        sendBookingConfirmationEmail(result.booking_id).catch(error => {
-          console.error('Failed to send booking confirmation email:', error)
-        })
-      }
+      // Email will be sent via database trigger
     }
 
     revalidatePath('/account')
@@ -111,6 +132,7 @@ export async function updateBookingStatus(bookingId: string, status: 'confirmed'
     }
 
     // Get booking to check permissions
+    const supabaseAdmin = await createClient({ useServiceRole: true })
     const { data: booking } = await supabaseAdmin
       .from('bookings')
       .select('user_id, restaurant_id')
@@ -186,6 +208,7 @@ export async function updateBooking(bookingId: string, updates: {
     }
 
     // Get booking to check permissions
+    const supabaseAdmin = await createClient({ useServiceRole: true })
     const { data: booking } = await supabaseAdmin
       .from('bookings')
       .select('user_id, restaurant_id')
