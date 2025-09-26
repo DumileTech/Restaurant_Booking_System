@@ -1,5 +1,7 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+// This line helps your code editor understand Supabase's special features.
+import "jsr:@supabase/functions-js/edge-runtime.d.ts"
+// This lets us connect to our Supabase project from within the function.
+import { createClient } from 'jsr:@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -19,7 +21,7 @@ interface EmailData {
   html: string
 }
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -78,7 +80,7 @@ serve(async (req) => {
           restaurantLocation: restaurant.location,
           date: booking.date,
           time: booking.time,
-          partySize: booking.party_size || 2,
+          partySize: booking.party_size,
           specialRequests: booking.special_requests,
           bookingId: booking.id
         })
