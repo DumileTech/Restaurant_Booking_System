@@ -42,6 +42,12 @@ A comprehensive restaurant booking system built with Next.js, Supabase, and Type
 - **Resender Integration**: Professional email delivery service
 - **Automated Reminders**: Daily booking reminders via cron jobs
 - **Monthly Summaries**: Reward point summaries for active users
+- **Supabase Webhooks**: Real-time email triggers via database events
+- **Edge Functions**: Serverless email processing with Supabase Edge Functions
+- **Database Triggers**: Automatic webhook calls on booking status changes
+- **Webhook Endpoints**: RESTful webhook receivers for external integrations
+- **Real-time Notifications**: Instant email sending when bookings are confirmed
+- **Scalable Architecture**: Event-driven email system using Supabase's native features
 - **Beautiful Templates**: HTML email templates with responsive design
 
 ## Tech Stack
@@ -53,6 +59,8 @@ A comprehensive restaurant booking system built with Next.js, Supabase, and Type
 - **Authentication**: Supabase Auth
 - **Storage**: Supabase Storage with bucket policies
 - **Email Service**: Resender for transactional emails
+- **Webhooks**: Supabase Database Webhooks
+- **Edge Functions**: Supabase Edge Functions for serverless email processing
 
 ## Getting Started
 
@@ -101,6 +109,48 @@ CRON_SECRET=your_cron_secret_for_scheduled_jobs
 5. Start the development server:
 ```bash
 npm run dev
+```
+
+### Supabase Webhook Configuration
+
+To enable automatic email sending via webhooks:
+
+1. **Deploy Edge Functions**:
+```bash
+# Deploy the booking email function
+supabase functions deploy send-booking-email
+
+# Deploy the reminder function  
+supabase functions deploy send-booking-reminders
+```
+
+2. **Set Environment Variables** in Supabase Dashboard:
+```env
+SUPABASE_URL=your_supabase_url
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+RESEND_API_KEY=your_resend_api_key
+```
+
+3. **Configure Database Webhooks** in Supabase Dashboard:
+   - Go to Database → Webhooks
+   - Create webhook for `bookings` table
+   - Set URL to your Edge Function: `https://your-project.supabase.co/functions/v1/send-booking-email`
+   - Enable for `INSERT` and `UPDATE` events
+
+4. **Set up Cron Jobs** for reminders:
+```bash
+# Schedule daily reminder function
+supabase functions schedule send-booking-reminders --cron "0 9 * * *"
+```
+
+### Manual Webhook Testing
+
+```bash
+# Test booking confirmation webhook
+curl -X POST https://your-project.supabase.co/functions/v1/send-booking-email
+
+# Test reminder function
+curl -X POST https://your-project.supabase.co/functions/v1/send-booking-reminders
 ```
 
 ## Database Schema
@@ -155,6 +205,18 @@ The system uses **Resender** for reliable email delivery:
 - **Booking Reminders**: Sent 24 hours before reservation
 - **Monthly Summaries**: Monthly reward point summaries
 
+#### Webhook-Triggered Emails
+- **Real-time Confirmations**: Automatically sent via Supabase webhooks when booking status changes to 'confirmed'
+- **Database Triggers**: Native PostgreSQL triggers call Edge Functions for instant email delivery
+- **Scalable Processing**: Edge Functions handle email sending without blocking the main application
+
+#### Edge Function Architecture
+```
+Database Event → Webhook Trigger → Edge Function → Resender API → Email Delivered
+```
+
+This architecture ensures reliable, scalable email delivery with minimal latency and no impact on the main application performance.
+
 #### Manual Email Triggers
 ```bash
 # Send booking reminders manually
@@ -169,12 +231,28 @@ curl -X POST http://localhost:3000/api/email/send \
   -d '{"type": "booking_confirmation", "data": {...}}'
 ```
 
+#### Webhook Endpoints
+```bash
+# Supabase webhook receiver
+POST /api/webhooks/supabase
+```
+
 #### Email Templates
 All emails use responsive HTML templates with:
 - Professional TableRewards branding
 - Mobile-friendly responsive design
 - Clear call-to-actions and booking details
 - South African date/time formatting
+
+### Webhook Integration
+
+The system uses Supabase's native webhook functionality:
+
+- **Database Triggers**: Automatically fire when booking status changes
+- **Edge Functions**: Process webhook payloads and send emails via Resender
+- **Real-time Processing**: Emails sent immediately when bookings are confirmed
+- **Reliable Delivery**: Built-in retry logic and error handling
+- **Monitoring**: All webhook calls logged in `email_notifications` table
 
 ## Supabase CLI Operations
 
