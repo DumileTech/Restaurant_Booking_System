@@ -1,5 +1,4 @@
 import { createClient } from '@supabase/supabase-js'
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import { Database } from './supabase'
 
@@ -18,15 +17,19 @@ export const supabaseAdmin = createClient<Database>(supabaseUrl, supabaseService
   }
 })
 
-// Create server client for handling user sessions
+// Create server client for handling user sessions  
 export function createServerSupabaseClient() {
-  const cookieStore = cookies()
-  
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    throw new Error('Missing Supabase environment variables for server client')
-  }
-  
-  return createServerComponentClient<Database>({ cookies: () => cookieStore })
+  return createClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookies().get(name)?.value
+        },
+      },
+    }
+  )
 }
 
 // Get current user from session

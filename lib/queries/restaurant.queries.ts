@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase'
-import { Database } from '@/lib/supabase'
+import type { Database } from '@/lib/supabase'
 
 type Restaurant = Database['public']['Tables']['restaurants']['Row']
 type RestaurantInsert = Database['public']['Tables']['restaurants']['Insert']

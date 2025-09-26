@@ -1,4 +1,13 @@
 // Centralized type definitions
+import type { Database } from './supabase'
+
+// Extract types from Database schema
+export type User = Database['public']['Tables']['users']['Row']
+export type Restaurant = Database['public']['Tables']['restaurants']['Row'] 
+export type Booking = Database['public']['Tables']['bookings']['Row']
+export type Reward = Database['public']['Tables']['rewards']['Row']
+
+// Legacy types for backward compatibility
 export interface User {
   id: string
   email: string

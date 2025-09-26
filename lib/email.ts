@@ -22,12 +22,12 @@ export class EmailService {
 
   async sendEmail({ to, subject, html, from }: EmailTemplate): Promise<boolean> {
     try {
-      if (!process.env.RESEND_API_KEY) {
+      if (!resend || !process.env.RESEND_API_KEY) {
         console.error('RESEND_API_KEY is not configured')
         return false
       }
 
-      const { data, error } = await resend.emails.send({
+      const { data, error } = await resend!.emails.send({
         from: from || this.fromEmail,
         to: [to],
         subject,

@@ -1,5 +1,10 @@
 import { emailService } from './email'
-import { supabaseAdmin } from './auth-server'
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
 // Function to send booking confirmation email when booking is confirmed
 export async function sendBookingConfirmationEmail(bookingId: string) {

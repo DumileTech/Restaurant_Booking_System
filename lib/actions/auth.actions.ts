@@ -4,8 +4,6 @@ import { supabaseAdmin, createServerSupabaseClient } from '@/lib/auth-server'
 import { validateAuth } from '@/lib/utils/validation'
 import { handleApiError, AuthenticationError, ValidationError } from '@/lib/utils/errors'
 import { sanitizeString, sanitizeEmail } from '@/lib/utils/validation'
-import { redirect } from 'next/navigation'
-import { cookies } from 'next/headers'
 
 export async function registerUser(formData: FormData) {
   try {

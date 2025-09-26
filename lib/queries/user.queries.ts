@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase'
-import { Database } from '@/lib/supabase'
+import type { Database } from '@/lib/supabase'
 
 type User = Database['public']['Tables']['users']['Row']
 type UserInsert = Database['public']['Tables']['users']['Insert']
