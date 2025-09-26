@@ -1,7 +1,8 @@
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/utils/supabase/server'
 
 // Get all rewards for a user
 export async function getUserRewards(userId: string) {
+  const supabase = await createClient()
   const { data, error } = await supabase
     .from('rewards')
     .select('*')
@@ -14,6 +15,7 @@ export async function getUserRewards(userId: string) {
 
 // Create reward entry
 export async function createReward(reward: RewardInsert) {
+  const supabase = await createClient()
   const { data, error } = await supabase
     .from('rewards')
     .insert(reward)
@@ -26,6 +28,7 @@ export async function createReward(reward: RewardInsert) {
 
 // Get reward by ID
 export async function getRewardById(id: string) {
+  const supabase = await createClient()
   const { data, error } = await supabase
     .from('rewards')
     .select(`
@@ -51,6 +54,7 @@ export async function getRewardById(id: string) {
 
 // Get rewards summary for user
 export async function getUserRewardsSummary(userId: string) {
+  const supabase = await createClient()
   const { data: user, error: userError } = await supabase
     .from('users')
     .select('points')
@@ -59,6 +63,7 @@ export async function getUserRewardsSummary(userId: string) {
 
   if (userError) throw userError
 
+  const supabase2 = await createClient()
   const { data: rewards, error: rewardsError } = await supabase
     .from('rewards')
     .select('points_change, created_at')
@@ -87,6 +92,7 @@ export async function getUserRewardsSummary(userId: string) {
 
 // Get rewards by booking
 export async function getRewardsByBooking(bookingId: string) {
+  const supabase = await createClient()
   const { data, error } = await supabase
     .from('rewards')
     .select('*')
@@ -99,6 +105,7 @@ export async function getRewardsByBooking(bookingId: string) {
 
 // Get all rewards (admin)
 export async function getAllRewards() {
+  const supabase = await createClient()
   const { data, error } = await supabase
     .from('rewards')
     .select(`
@@ -123,6 +130,7 @@ export async function getAllRewards() {
 
 // Delete reward
 export async function deleteReward(id: string) {
+  const supabase = await createClient()
   const { error } = await supabase
     .from('rewards')
     .delete()
@@ -133,6 +141,7 @@ export async function deleteReward(id: string) {
 
 // Get rewards analytics
 export async function getRewardsAnalytics(startDate?: string, endDate?: string) {
+  const supabase = await createClient()
   let query = supabase
     .from('rewards')
     .select('points_change, created_at, user_id')

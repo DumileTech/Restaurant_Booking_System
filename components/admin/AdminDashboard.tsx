@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { confirmBooking, cancelBooking } from '@/lib/actions/booking.actions'
-import { supabaseAdmin } from '@/lib/auth-server'
 import { CircleCheck as CheckCircle, Circle as XCircle, Clock, Users, Calendar, MapPin } from 'lucide-react'
 
 interface Restaurant {
@@ -49,20 +48,10 @@ export default function AdminDashboard({ restaurants }: AdminDashboardProps) {
   const fetchBookings = async () => {
     setLoading(true)
     try {
-      const { data, error } = await supabaseAdmin
-        .from('bookings')
-        .select(`
-          *,
-          users (
-            email,
-            name
-          )
-        `)
-        .eq('restaurant_id', selectedRestaurant)
-        .order('created_at', { ascending: false })
-
-      if (error) throw error
-      setBookings(data || [])
+      // TODO: Replace with server action call
+      // This needs to be refactored to use a server action
+      console.log('Fetching bookings for restaurant:', selectedRestaurant)
+      setBookings([])
     } catch (error) {
       console.error('Error fetching bookings:', error)
     }

@@ -1,6 +1,5 @@
 'use server'
 
-import { supabaseAdmin } from '@/lib/auth-server'
 import { createClient } from '@/utils/supabase/server'
 import { validateBooking } from '@/lib/utils/validation'
 import { handleApiError, AuthenticationError, ValidationError } from '@/lib/utils/errors'

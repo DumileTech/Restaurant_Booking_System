@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/utils/supabase/server'
 
 // Get all restaurants with optional filters
 export async function getAllRestaurants(filters?: {
@@ -6,6 +6,7 @@ export async function getAllRestaurants(filters?: {
   location?: string
   search?: string
 }) {
+  const supabase = await createClient()
   let query = supabase.from('restaurants').select('*')
 
   if (filters?.cuisine) {
@@ -28,6 +29,7 @@ export async function getAllRestaurants(filters?: {
 
 // Get restaurant by ID
 export async function getRestaurantById(id: string) {
+  const supabase = await createClient()
   const { data, error } = await supabase
     .from('restaurants')
     .select('*')
@@ -40,6 +42,7 @@ export async function getRestaurantById(id: string) {
 
 // Create new restaurant
 export async function createRestaurant(restaurant: RestaurantInsert) {
+  const supabase = await createClient()
   const { data, error } = await supabase
     .from('restaurants')
     .insert(restaurant)
@@ -52,6 +55,7 @@ export async function createRestaurant(restaurant: RestaurantInsert) {
 
 // Update restaurant
 export async function updateRestaurant(id: string, updates: RestaurantUpdate) {
+  const supabase = await createClient()
   const { data, error } = await supabase
     .from('restaurants')
     .update(updates)
@@ -65,6 +69,7 @@ export async function updateRestaurant(id: string, updates: RestaurantUpdate) {
 
 // Delete restaurant
 export async function deleteRestaurant(id: string) {
+  const supabase = await createClient()
   const { error } = await supabase
     .from('restaurants')
     .delete()
@@ -79,6 +84,7 @@ export async function getRestaurantAvailability(
   date: string,
   partySize: number = 2
 ) {
+  const supabase = await createClient()
   const { data, error } = await supabase.rpc('get_restaurant_availability', {
     restaurant_id_param: restaurantId,
     date_param: date,
@@ -95,6 +101,7 @@ export async function getRestaurantAnalytics(
   startDate?: string,
   endDate?: string
 ) {
+  const supabase = await createClient()
   const { data, error } = await supabase.rpc('get_restaurant_analytics', {
     restaurant_id_param: restaurantId,
     start_date: startDate,
@@ -107,6 +114,7 @@ export async function getRestaurantAnalytics(
 
 // Get restaurants by admin
 export async function getRestaurantsByAdmin(adminId: string) {
+  const supabase = await createClient()
   const { data, error } = await supabase
     .from('restaurants')
     .select('*')

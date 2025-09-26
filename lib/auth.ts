@@ -1,6 +1,7 @@
-import { supabase } from './supabase'
+import { createClient } from '@/utils/supabase/client'
 
 export const signInWithEmail = async (email: string) => {
+  const supabase = createClient()
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
@@ -12,16 +13,19 @@ export const signInWithEmail = async (email: string) => {
 }
 
 export const signOut = async () => {
+  const supabase = createClient()
   const { error } = await supabase.auth.signOut()
   if (error) throw error
 }
 
 export const getCurrentUser = async () => {
+  const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   return user
 }
 
 export const createUserProfile = async (user: any) => {
+  const supabase = createClient()
   const { error } = await supabase
     .from('users')
     .upsert({
