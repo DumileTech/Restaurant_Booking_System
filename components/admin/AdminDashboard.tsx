@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { confirmBooking, cancelBooking } from '@/lib/actions/booking.actions'
+import { confirmBooking, cancelBooking } from '@/lib/actions/client/booking.actions'
 import { CircleCheck as CheckCircle, Circle as XCircle, Clock, Users, Calendar, MapPin } from 'lucide-react'
 
 interface Restaurant {

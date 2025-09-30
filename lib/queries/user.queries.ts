@@ -1,8 +1,23 @@
 import { createClient } from '@/utils/supabase/server'
 
+// Type definitions for user operations
+export interface UserInsert {
+  id: string
+  email: string
+  name?: string
+  role?: 'customer' | 'restaurant_manager' | 'admin'
+  points?: number
+}
+
+export interface UserUpdate {
+  name?: string
+  email?: string
+  points?: number
+}
+
 // Get user by ID
 export async function getUserById(id: string) {
-  const supabase = await createClient()
+  const supabase = await createClient({ useServiceRole: true })
   const { data, error } = await supabase
     .from('users')
     .select('*')
@@ -13,9 +28,22 @@ export async function getUserById(id: string) {
   return data
 }
 
+// Get user by email
+export async function getUserByEmail(email: string) {
+  const supabase = await createClient({ useServiceRole: true })
+  const { data, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('email', email)
+    .single()
+
+  if (error) throw error
+  return data
+}
+
 // Get user dashboard data
 export async function getUserDashboard(userId: string) {
-  const supabase = await createClient()
+  const supabase = await createClient({ useServiceRole: true })
   const { data, error } = await supabase.rpc('get_user_dashboard', {
     user_id_param: userId
   })
@@ -25,11 +53,11 @@ export async function getUserDashboard(userId: string) {
 }
 
 // Create or update user profile
-export async function upsertUserProfile(user: UserInsert) {
-  const supabase = await createClient()
+export async function createUserProfile(user: UserInsert) {
+  const supabase = await createClient({ useServiceRole: true })
   const { data, error } = await supabase
     .from('users')
-    .upsert(user)
+    .upsert(user, { onConflict: 'id' })
     .select()
     .single()
 
@@ -39,7 +67,7 @@ export async function upsertUserProfile(user: UserInsert) {
 
 // Update user profile
 export async function updateUserProfile(id: string, updates: UserUpdate) {
-  const supabase = await createClient()
+  const supabase = await createClient({ useServiceRole: true })
   const { data, error } = await supabase
     .from('users')
     .update(updates)
@@ -53,7 +81,7 @@ export async function updateUserProfile(id: string, updates: UserUpdate) {
 
 // Update user points
 export async function updateUserPoints(id: string, points: number) {
-  const supabase = await createClient()
+  const supabase = await createClient({ useServiceRole: true })
   const { data, error } = await supabase
     .from('users')
     .update({ points })
@@ -65,10 +93,9 @@ export async function updateUserPoints(id: string, points: number) {
   return data
 }
 
-
 // Get user rewards history
 export async function getUserRewards(userId: string) {
-  const supabase = await createClient()
+  const supabase = await createClient({ useServiceRole: true })
   const { data, error } = await supabase
     .from('rewards')
     .select('*')
@@ -81,7 +108,7 @@ export async function getUserRewards(userId: string) {
 
 // Get all users (admin only)
 export async function getAllUsers() {
-  const supabase = await createClient()
+  const supabase = await createClient({ useServiceRole: true })
   const { data, error } = await supabase
     .from('users')
     .select('*')
@@ -93,7 +120,7 @@ export async function getAllUsers() {
 
 // Delete user
 export async function deleteUser(id: string) {
-  const supabase = await createClient()
+  const supabase = await createClient({ useServiceRole: true })
   const { error } = await supabase
     .from('users')
     .delete()
@@ -104,7 +131,7 @@ export async function deleteUser(id: string) {
 
 // Search users
 export async function searchUsers(query: string) {
-  const supabase = await createClient()
+  const supabase = await createClient({ useServiceRole: true })
   const { data, error } = await supabase
     .from('users')
     .select('*')

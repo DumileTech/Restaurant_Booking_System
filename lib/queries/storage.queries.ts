@@ -11,7 +11,7 @@ export async function uploadFile(
     upsert?: boolean
   }
 ) {
-  const supabase = await createClient()
+  const supabase = await createClient({ useServiceRole: true })
   const { data, error } = await supabase.storage
     .from(bucket)
     .upload(path, file, {
@@ -26,7 +26,7 @@ export async function uploadFile(
 
 // Download file from storage
 export async function downloadFile(bucket: string, path: string) {
-  const supabase = await createClient()
+  const supabase = await createClient({ useServiceRole: true })
   const { data, error } = await supabase.storage
     .from(bucket)
     .download(path)
@@ -37,7 +37,7 @@ export async function downloadFile(bucket: string, path: string) {
 
 // Get public URL for file
 export async function getPublicUrl(bucket: string, path: string) {
-  const supabase = await createClient()
+  const supabase = await createClient({ useServiceRole: true })
   const { data } = supabase.storage
     .from(bucket)
     .getPublicUrl(path)
@@ -51,7 +51,7 @@ export async function getSignedUrl(
   path: string,
   expiresIn: number = 3600
 ) {
-  const supabase = await createClient()
+  const supabase = await createClient({ useServiceRole: true })
   const { data, error } = await supabase.storage
     .from(bucket)
     .createSignedUrl(path, expiresIn)
@@ -70,7 +70,7 @@ export async function listFiles(
     sortBy?: { column: string; order: 'asc' | 'desc' }
   }
 ) {
-  const supabase = await createClient()
+  const supabase = await createClient({ useServiceRole: true })
   const { data, error } = await supabase.storage
     .from(bucket)
     .list(path, {
@@ -85,7 +85,7 @@ export async function listFiles(
 
 // Delete file from storage
 export async function deleteFile(bucket: string, paths: string[]) {
-  const supabase = await createClient()
+  const supabase = await createClient({ useServiceRole: true })
   const { data, error } = await supabase.storage
     .from(bucket)
     .remove(paths)
@@ -100,7 +100,7 @@ export async function moveFile(
   fromPath: string,
   toPath: string
 ) {
-  const supabase = await createClient()
+  const supabase = await createClient({ useServiceRole: true })
   const { data, error } = await supabase.storage
     .from(bucket)
     .move(fromPath, toPath)
@@ -115,7 +115,7 @@ export async function copyFile(
   fromPath: string,
   toPath: string
 ) {
-  const supabase = await createClient()
+  const supabase = await createClient({ useServiceRole: true })
   const { data, error } = await supabase.storage
     .from(bucket)
     .copy(fromPath, toPath)
