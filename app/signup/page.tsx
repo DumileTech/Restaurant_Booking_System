@@ -47,7 +47,7 @@ export default function SignUpPage() {
           {/* Benefits */}
           <Card className="mb-8 bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
             <CardContent className="p-6">
-              <h3 className="font-semibold mb-4 text-center">What you'll get:</h3>
+              <h3 className="font-semibold mb-4 text-center">What you&#39;ll get:</h3>
               <div className="space-y-3 text-sm">
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0" />
@@ -55,7 +55,7 @@ export default function SignUpPage() {
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0" />
-                  <span>Access to Cape Town's finest restaurants</span>
+                  <span>Access to Cape Town&#39;s finest restaurants</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0" />

@@ -46,7 +46,7 @@ export default async function AdminPage() {
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground mb-4">
-                You don't have admin access to any restaurants. Contact support if you believe this is an error.
+                You don&#39;t have admin access to any restaurants. Contact support if you believe this is an error.
               </p>
               <Button asChild>
                 <Link href="/">Browse Restaurants</Link>
