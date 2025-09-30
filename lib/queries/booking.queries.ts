@@ -1,8 +1,26 @@
 import { createClient } from '@/utils/supabase/server'
 
+// Type definitions for booking operations
+export interface BookingInsert {
+  user_id: string
+  restaurant_id: string
+  date: string
+  time: string
+  party_size: number
+  special_requests?: string
+}
+
+export interface BookingUpdate {
+  date?: string
+  time?: string
+  party_size?: number
+  status?: 'pending' | 'confirmed' | 'cancelled'
+  special_requests?: string
+}
+
 // Get all bookings for a user
 export async function getUserBookings(userId: string) {
-  const supabase = await createClient()
+  const supabase = await createClient({ useServiceRole: true })
   const { data, error } = await supabase
     .from('bookings')
     .select(`
@@ -23,7 +41,7 @@ export async function getUserBookings(userId: string) {
 
 // Get all bookings for a restaurant
 export async function getRestaurantBookings(restaurantId: string) {
-  const supabase = await createClient()
+  const supabase = await createClient({ useServiceRole: true })
   const { data, error } = await supabase
     .from('bookings')
     .select(`
@@ -42,7 +60,7 @@ export async function getRestaurantBookings(restaurantId: string) {
 
 // Get booking by ID
 export async function getBookingById(id: string) {
-  const supabase = await createClient()
+  const supabase = await createClient({ useServiceRole: true })
   const { data, error } = await supabase
     .from('bookings')
     .select(`
@@ -65,15 +83,8 @@ export async function getBookingById(id: string) {
 }
 
 // Create booking with validation
-export async function createBookingWithValidation(booking: {
-  user_id: string
-  restaurant_id: string
-  date: string
-  time: string
-  party_size: number
-  special_requests?: string
-}) {
-  const supabase = await createClient()
+export async function createBookingWithValidation(booking: BookingInsert) {
+  const supabase = await createClient({ useServiceRole: true })
   const { data, error } = await supabase.rpc('create_booking_with_validation', {
     user_id_param: booking.user_id,
     restaurant_id_param: booking.restaurant_id,
@@ -89,7 +100,7 @@ export async function createBookingWithValidation(booking: {
 
 // Create simple booking
 export async function createBooking(booking: BookingInsert) {
-  const supabase = await createClient()
+  const supabase = await createClient({ useServiceRole: true })
   const { data, error } = await supabase
     .from('bookings')
     .insert(booking)
@@ -102,7 +113,7 @@ export async function createBooking(booking: BookingInsert) {
 
 // Update booking
 export async function updateBooking(id: string, updates: BookingUpdate) {
-  const supabase = await createClient()
+  const supabase = await createClient({ useServiceRole: true })
   const { data, error } = await supabase
     .from('bookings')
     .update(updates)
@@ -116,7 +127,7 @@ export async function updateBooking(id: string, updates: BookingUpdate) {
 
 // Update booking status
 export async function updateBookingStatus(id: string, status: 'pending' | 'confirmed' | 'cancelled') {
-  const supabase = await createClient()
+  const supabase = await createClient({ useServiceRole: true })
   const { data, error } = await supabase
     .from('bookings')
     .update({ status })
@@ -130,7 +141,7 @@ export async function updateBookingStatus(id: string, status: 'pending' | 'confi
 
 // Delete booking
 export async function deleteBooking(id: string) {
-  const supabase = await createClient()
+  const supabase = await createClient({ useServiceRole: true })
   const { error } = await supabase
     .from('bookings')
     .delete()
@@ -141,7 +152,7 @@ export async function deleteBooking(id: string) {
 
 // Get upcoming bookings
 export async function getUpcomingBookings(userId?: string, restaurantId?: string) {
-  const supabase = await createClient()
+  const supabase = await createClient({ useServiceRole: true })
   let query = supabase
     .from('bookings')
     .select(`
@@ -178,7 +189,7 @@ export async function getBookingsByDateRange(
   endDate: string,
   restaurantId?: string
 ) {
-  const supabase = await createClient()
+  const supabase = await createClient({ useServiceRole: true })
   let query = supabase
     .from('bookings')
     .select(`
