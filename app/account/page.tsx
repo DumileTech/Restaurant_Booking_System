@@ -7,13 +7,11 @@ import RewardsHistory from '@/components/rewards/RewardsHistory'
 import { Award, Calendar, Clock, MapPin, Star } from 'lucide-react'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
 async function getUserData(userId: string) {
-  const cookieStore = await cookies()
   const supabase = await createClient({ useServiceRole: true })
   const [userResult, bookingsResult, rewardsResult] = await Promise.all([
     supabase
@@ -49,8 +47,7 @@ async function getUserData(userId: string) {
 }
 
 export default async function AccountPage({ searchParams }: { searchParams: { success?: string } }) {
-  const cookieStore = await cookies()
-  const supabase = await createClient({ cookieStore })
+  const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   
   if (!user) {
@@ -85,7 +82,7 @@ export default async function AccountPage({ searchParams }: { searchParams: { su
         {searchParams.success === 'booking' && (
           <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
             <p className="text-green-800">
-              ✅ Booking created successfully! You'll earn 10 points once the restaurant confirms your reservation.
+              ✅ Booking created successfully! You&#39;ll earn 10 points once the restaurant confirms your reservation.
             </p>
           </div>
         )}
@@ -141,7 +138,7 @@ export default async function AccountPage({ searchParams }: { searchParams: { su
             <RewardsHistory rewards={rewards} totalPoints={profile?.points || 0} />
           </TabsContent>
         </Tabs>
-        </div>
+        
       </div>
     </div>
   )
