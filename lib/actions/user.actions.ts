@@ -35,7 +35,11 @@ export async function getUserProfile() {
   try {
     const user = await getCurrentUser()
     if (!user) {
-      throw new AuthenticationError()
+      // Expected unauthenticated state: return a structured response instead of throwing
+      return {
+        success: false,
+        error: 'Not authenticated'
+      }
     }
 
     return {

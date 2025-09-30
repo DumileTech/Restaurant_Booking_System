@@ -2,17 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { getUserProfile } from '@/lib/actions/client/user.actions'
-import { logoutUser } from '@/lib/actions/client/auth.actions'
+import { getUserProfile } from '@/lib/actions/user.actions'
+import { logoutUser } from '@/lib/actions/auth.actions'
+import type { User } from '@/lib/types'
 import { LogIn, LogOut, User as UserIcon } from 'lucide-react'
 
-interface User {
-  id: string
-  email: string
-  name: string | null
-  points: number
-  role: string
-}
 
 export default function AuthButton() {
   const [user, setUser] = useState<User | null>(null)

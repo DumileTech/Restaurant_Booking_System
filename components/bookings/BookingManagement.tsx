@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { updateBooking, cancelBooking } from '@/lib/actions/client/booking.actions'
+import { updateBooking, cancelBooking } from '@/lib/actions/booking.actions'
 import { Calendar, Clock, Users, CreditCard as Edit, Trash2, CircleAlert as AlertCircle } from 'lucide-react'
 
 interface Booking {
@@ -51,7 +51,7 @@ export default function BookingManagement({ booking, onUpdate }: BookingManageme
         date: formData.date,
         time: formData.time,
         party_size: parseInt(formData.party_size),
-        special_requests: formData.special_requests || null,
+        special_requests: formData.special_requests,
       })
 
       if (!response.success) {

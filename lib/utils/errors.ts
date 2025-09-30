@@ -43,6 +43,14 @@ export class ConflictError extends AppError {
 }
 
 export function handleApiError(error: unknown): { message: string; statusCode: number } {
+  // Do not log expected authentication cases to avoid noisy stack traces in the console
+  if (error instanceof AuthenticationError) {
+    return {
+      message: error.message,
+      statusCode: error.statusCode
+    }
+  }
+
   console.error('API Error:', error)
 
   if (error instanceof AppError) {

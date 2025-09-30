@@ -1,7 +1,7 @@
 // This line helps your code editor understand Supabase's special features.
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 // This lets us connect to our Supabase project from within the function.
-import { createClient } from 'jsr:@supabase/supabase-js@2'
+import { createClient } from '@supabase/supabase-js'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',

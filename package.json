@@ -91,6 +91,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "supabase": "^2.47.2",
     "tsx": "^4.20.5"
   }
 }

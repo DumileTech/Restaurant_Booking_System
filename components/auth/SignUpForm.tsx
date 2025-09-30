@@ -5,8 +5,9 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { registerUser } from '@/lib/actions/client/auth.actions'
+import { registerUser } from '@/lib/actions/auth.actions'
 import { validateAuth } from '@/lib/utils/validation'
+import { logError } from '@/lib/utils/errors'
 import { CircleAlert as AlertCircle, CircleCheck as CheckCircle, Eye, EyeOff, User, Mail, Lock } from 'lucide-react'
 
 export default function SignUpForm() {
@@ -15,7 +16,8 @@ export default function SignUpForm() {
     name: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+
   })
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')

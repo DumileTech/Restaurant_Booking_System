@@ -154,7 +154,7 @@ INSERT INTO email_notifications (
   body,
   created_at
 ) VALUES (
-  'admin@tablerewards.co.za',
+  'rethabile@hapogroup.co.za',
   'User Roles System Added',
   'User roles system has been successfully implemented. Users now have roles: customer (default), restaurant_manager, and admin. RLS policies have been updated to enforce role-based access control.',
   now()

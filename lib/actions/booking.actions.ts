@@ -5,11 +5,11 @@ import { createClient } from '@/utils/supabase/server'
 import { validateBooking } from '@/lib/utils/validation'
 import { handleApiError, AuthenticationError, ValidationError } from '@/lib/utils/errors'
 import { revalidatePath } from 'next/cache'
+import {SupabaseClient} from "@supabase/supabase-js";
 
 // Get current user from session
 async function getCurrentUser() {
-  const cookieStore = await cookies()
-  const supabase = await createClient({ cookieStore })
+  const supabase = await createClient() as SupabaseClient;
   
   try {
     const { data: { user }, error } = await supabase.auth.getUser()
@@ -63,7 +63,7 @@ export async function createBooking(formData: FormData) {
     }
 
     // Verify restaurant exists
-    const supabaseAdmin = await createClient({ useServiceRole: true })
+    const supabaseAdmin = await createClient() as SupabaseClient;
     const { data: restaurant, error: restaurantError } = await supabaseAdmin
       .from('restaurants')
       .select('id, name, capacity')
@@ -133,7 +133,7 @@ export async function updateBookingStatus(bookingId: string, status: 'confirmed'
     }
 
     // Get booking to check permissions
-    const supabaseAdmin = await createClient({ useServiceRole: true })
+    const supabaseAdmin = await createClient()  as SupabaseClient;
     const { data: booking } = await supabaseAdmin
       .from('bookings')
       .select('user_id, restaurant_id')
@@ -209,7 +209,7 @@ export async function updateBooking(bookingId: string, updates: {
     }
 
     // Get booking to check permissions
-    const supabaseAdmin = await createClient({ useServiceRole: true })
+    const supabaseAdmin = await createClient({ useServiceRole: true }) as SupabaseClient;
     const { data: booking } = await supabaseAdmin
       .from('bookings')
       .select('user_id, restaurant_id')

@@ -213,7 +213,7 @@ async function bookingOperations(operation: string, options: Record<string, stri
           date_param: options.date,
           time_param: options.time,
           party_size_param: parseInt(options.party_size || '2'),
-          special_requests_param: options.special_requests || null
+          special_requests_param: options.special_requests
         })
       logResult('Create Booking', createResult, createError)
       break

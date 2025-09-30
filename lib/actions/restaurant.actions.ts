@@ -1,8 +1,8 @@
 'use server'
 
 import { createClient } from '@/utils/supabase/server'
-import { supabaseAdmin } from '@/lib/auth-server'
 import { handleApiError } from '@/lib/utils/errors'
+import {SupabaseClient} from "@supabase/supabase-js";
 
 export async function getRestaurants(filters?: {
   cuisine?: string
@@ -10,7 +10,7 @@ export async function getRestaurants(filters?: {
   search?: string
 }) {
   try {
-    const supabase = await createClient({ useServiceRole: true })
+    const supabase = await createClient() as SupabaseClient;
     let query = supabase.from('restaurants').select('*')
 
     if (filters?.cuisine) {
@@ -47,7 +47,7 @@ export async function getRestaurants(filters?: {
 
 export async function getRestaurant(id: string) {
   try {
-    const supabase = await createClient({ useServiceRole: true })
+    const supabase = await createClient() as SupabaseClient;
     const { data: restaurant, error } = await supabase
       .from('restaurants')
       .select('*')
@@ -86,7 +86,7 @@ export async function getRestaurantAvailability(
       throw new Error('Party size must be between 1 and 20')
     }
 
-    const supabase = await createClient({ useServiceRole: true })
+    const supabase = await createClient() as SupabaseClient;
     const { data: availability, error } = await supabase
       .rpc('get_restaurant_availability', {
         restaurant_id_param: id,
@@ -114,4 +114,35 @@ export async function getRestaurantAvailability(
       error: message
     }
   }
+}
+
+export async function getMenuItems(restaurantId: string) {
+    if (!restaurantId) {
+        return { success: false, error: 'Restaurant ID is required.' };
+    }
+
+    try {
+        const supabase = await createClient() as SupabaseClient;
+        const { data, error } = await supabase
+            .from('menu_items')
+            .select('*')
+            .eq('restaurant_id', restaurantId)
+            .order('category', { ascending: true }) // Group by category
+            .order('name', { ascending: true });   // Then sort by name
+
+        if (error) {
+            throw new Error(error.message);
+        }
+
+        return {
+            success: true,
+            data: data || [],
+        };
+    } catch (error) {
+        const { message } = handleApiError(error);
+        return {
+            success: false,
+            error: message,
+        };
+    }
 }

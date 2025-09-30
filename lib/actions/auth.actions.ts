@@ -5,6 +5,7 @@ import { createClient } from '@/utils/supabase/server'
 import { validateAuth } from '@/lib/utils/validation'
 import { handleApiError, AuthenticationError, ValidationError } from '@/lib/utils/errors'
 import { sanitizeString, sanitizeEmail } from '@/lib/utils/validation'
+import {SupabaseClient} from "@supabase/supabase-js";
 
 export async function registerUser(formData: FormData) {
   try {
@@ -32,7 +33,10 @@ export async function registerUser(formData: FormData) {
       email: sanitizedEmail,
       password,
       email_confirm: true,
-      user_metadata: { name: sanitizedName }
+      user_metadata: {
+          name: sanitizedName,
+        role: 'customer'},
+        app_metadata: { role : 'customer'},
     })
 
     if (authError) {
@@ -94,7 +98,7 @@ export async function loginUser(formData: FormData) {
       }
     }
 
-    const supabase = await createClient({ cookieStore })
+    const supabase = await createClient() as SupabaseClient;
     
     // Sign in user with Supabase auth
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -137,8 +141,7 @@ export async function loginUser(formData: FormData) {
 
 export async function logoutUser() {
   try {
-    const cookieStore = await cookies()
-    const supabase = await createClient({ cookieStore })
+    const supabase = await createClient() as SupabaseClient;
     await supabase.auth.signOut()
     
     return {
