@@ -33,3 +33,26 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/shelf/Uncommitted_changes_before_Update_at_2025_09_26_10_33_[Changes]/shelved.patch
+/.idea/shelf/Uncommitted_changes_before_Update_at_2025_09_26_10_39_[Changes]/shelved.patch
+/.idea/shelf/Uncommitted_changes_before_Update_at_2025_09_26_13_31_[Changes]/shelved.patch
+/.idea/shelf/Uncommitted_changes_before_Update_at_2025_09_26_16_34_[Changes]/shelved.patch
+/.idea/shelf/Uncommitted_changes_before_Update_at_2025_09_26_17_38_[Changes]/shelved.patch
+/.idea/shelf/Uncommitted_changes_before_Update_at_2025_09_26_18_04_[Changes]/shelved.patch
+/.idea/shelf/Uncommitted_changes_before_Update_at_2025_09_26_10_33__Changes_.xml
+/.idea/shelf/Uncommitted_changes_before_Update_at_2025_09_26_10_39__Changes_.xml
+/.idea/shelf/Uncommitted_changes_before_Update_at_2025_09_26_13_31__Changes_.xml
+/.idea/shelf/Uncommitted_changes_before_Update_at_2025_09_26_16_34__Changes_.xml
+/.idea/shelf/Uncommitted_changes_before_Update_at_2025_09_26_17_38__Changes_.xml
+/.idea/shelf/Uncommitted_changes_before_Update_at_2025_09_26_18_04__Changes_.xml
+/.idea/checkstyle-idea.xml
+/.idea/copilot.data.migration.agent.xml
+/.idea/copilot.data.migration.ask.xml
+/.idea/copilot.data.migration.ask2agent.xml
+/.idea/copilot.data.migration.edit.xml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/Restaurant_Booking_System.iml
+/.idea/vcs.xml
+/.idea/workspace.xml
