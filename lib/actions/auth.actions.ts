@@ -40,12 +40,14 @@ export async function registerUser(formData: FormData) {
     // Create user profile with default customer role
     const { error: profileError } = await supabaseAdmin
       .from('users')
-      .insert({
+      .upsert({
         id: authData.user.id,
         email: sanitizedEmail,
         name: sanitizedName,
-        role: 'customer',
+        role: 'customer', // Explicitly set role
         points: 0
+      }, {
+        onConflict: 'id'
       })
 
     if (profileError) {
