@@ -14,8 +14,7 @@ import { createClient } from '@/utils/supabase/server'
 // Required if you are using "output: 'export'" in next.config.js
 export async function generateStaticParams() {
   try {
-    const cookieStore = await cookies()
-    const supabase = await createClient({ cookieStore })
+    const supabase = await createClient({ useServiceRole: true })
     const { data: restaurants, error } = await supabase
       .from('restaurants')
       .select('id')
@@ -31,8 +30,7 @@ export async function generateStaticParams() {
 
 async function getRestaurant(id: string) {
   try {
-    const cookieStore = await cookies()
-    const supabase = await createClient({ cookieStore })
+    const supabase = await createClient({ useServiceRole: true })
     const { data: restaurant, error } = await supabase
       .from('restaurants')
       .select('*')

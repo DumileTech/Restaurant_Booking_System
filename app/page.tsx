@@ -8,8 +8,7 @@ import { createClient } from '@/utils/supabase/server'
 
 async function getRestaurants() {
   try {
-    const cookieStore = await cookies()
-    const supabase = await createClient({ cookieStore })
+    const supabase = await createClient({ useServiceRole: true })
     const { data: restaurants, error } = await supabase
       .from('restaurants')
       .select('*')
@@ -30,8 +29,7 @@ async function getRestaurants() {
 
 async function getFilterOptions() {
   try {
-    const cookieStore = await cookies()
-    const supabase = await createClient({ cookieStore })
+    const supabase = await createClient({ useServiceRole: true })
     const { data: restaurants, error } = await supabase
       .from('restaurants')
       .select('cuisine, location')
