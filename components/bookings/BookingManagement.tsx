@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { updateBooking, cancelBooking } from '@/lib/actions/booking.actions'
+import { updateBooking, cancelBooking } from '@/lib/actions/client/booking.actions'
 import { Calendar, Clock, Users, CreditCard as Edit, Trash2, CircleAlert as AlertCircle } from 'lucide-react'
 
 interface Booking {

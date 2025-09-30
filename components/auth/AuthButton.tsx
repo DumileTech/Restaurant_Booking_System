@@ -2,11 +2,17 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { getUserProfile } from '@/lib/actions/user.actions'
-import { logoutUser } from '@/lib/actions/auth.actions'
-import type { User } from '@/lib/types'
+import { getUserProfile } from '@/lib/actions/client/user.actions'
+import { logoutUser } from '@/lib/actions/client/auth.actions'
 import { LogIn, LogOut, User as UserIcon } from 'lucide-react'
 
+interface User {
+  id: string
+  email: string
+  name: string | null
+  points: number
+  role: string
+}
 
 export default function AuthButton() {
   const [user, setUser] = useState<User | null>(null)
@@ -17,10 +23,13 @@ export default function AuthButton() {
     const getProfile = async () => {
       try {
         const response = await getUserProfile()
-        if (response.success && response.data) {
+        if (response?.success && response.data) {
           setUser(response.data)
+        } else {
+          setUser(null)
         }
       } catch (error) {
+        console.error('Error getting user profile:', error)
         setUser(null)
       } finally {
         setInitialLoading(false)
@@ -35,9 +44,12 @@ export default function AuthButton() {
     
     setLoading(true)
     try {
-      await logoutUser()
-      setUser(null)
+      const response = await logoutUser()
+      if (response?.success) {
+        setUser(null)
+      }
     } catch (error) {
+      console.error('Logout error:', error)
       // Still clear user state even if logout request fails
       setUser(null)
     } finally {

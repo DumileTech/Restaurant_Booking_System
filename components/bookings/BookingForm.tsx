@@ -7,14 +7,28 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { createBooking } from '@/lib/actions/booking.actions'
-import { getRestaurantAvailability } from '@/lib/actions/restaurant.actions'
+import { createBooking } from '@/lib/actions/client/booking.actions'
+import { getRestaurantAvailability } from '@/lib/actions/client/restaurant.actions'
 import { validateBooking } from '@/lib/utils/validation'
-import { logError } from '@/lib/utils/errors'
-import type { Restaurant, BookingFormData } from '@/lib/types'
 import { useRouter } from 'next/navigation'
 import { Calendar, Clock, Users, CircleAlert as AlertCircle } from 'lucide-react'
 
+interface Restaurant {
+  id: string
+  name: string
+  location: string | null
+  cuisine: string | null
+  capacity: number | null
+  description: string | null
+  image_url: string | null
+}
+
+interface BookingFormData {
+  date: string
+  time: string
+  party_size: string
+  special_requests: string
+}
 
 interface BookingFormProps {
   restaurant: Restaurant
@@ -61,16 +75,19 @@ export default function BookingForm({ restaurant }: BookingFormProps) {
         parseInt(formData.party_size)
       )
       
-      if (response.success && response.data) {
+      if (response?.success && response.data) {
         setAvailableTimes(response.data.available_times || [])
         
         // Clear selected time if it's no longer available
         if (formData.time && !response.data.available_times?.includes(formData.time)) {
           setFormData(prev => ({ ...prev, time: '' }))
         }
+      } else {
+        console.error('Failed to check availability:', response?.error)
+        setError('Failed to check availability. Please try again.')
       }
     } catch (error) {
-      logError(error, 'Check Availability')
+      console.error('Check availability error:', error)
       setError('Failed to check availability. Please try again.')
     } finally {
       setCheckingAvailability(false)
@@ -118,15 +135,14 @@ export default function BookingForm({ restaurant }: BookingFormProps) {
       
       const response = await createBooking(formDataObj)
       
-      if (response.success) {
+      if (response?.success) {
         router.push('/account?success=booking')
       } else {
-        setError(response.error || 'Failed to create booking')
+        setError(response?.error || 'Failed to create booking')
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to create booking'
-      setError(errorMessage)
-      logError(error, 'Create Booking')
+      console.error('Create booking error:', error)
+      setError('Failed to create booking')
     } finally {
       setLoading(false)
     }
