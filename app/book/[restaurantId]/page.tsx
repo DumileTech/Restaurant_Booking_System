@@ -7,13 +7,15 @@ import { ArrowLeft, MapPin, Users, Utensils } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 import { createClient } from '@/utils/supabase/server'
 
 // This function tells Next.js which pages to build statically
 // Required if you are using "output: 'export'" in next.config.js
 export async function generateStaticParams() {
   try {
-    const supabase = await createClient()
+    const cookieStore = await cookies()
+    const supabase = await createClient({ cookieStore })
     const { data: restaurants, error } = await supabase
       .from('restaurants')
       .select('id')
@@ -29,7 +31,8 @@ export async function generateStaticParams() {
 
 async function getRestaurant(id: string) {
   try {
-    const supabase = await createClient()
+    const cookieStore = await cookies()
+    const supabase = await createClient({ cookieStore })
     const { data: restaurant, error } = await supabase
       .from('restaurants')
       .select('*')
@@ -45,7 +48,8 @@ async function getRestaurant(id: string) {
 
 async function getCurrentUser() {
   try {
-    const supabase = await createClient()
+    const cookieStore = await cookies()
+    const supabase = await createClient({ cookieStore })
     const { data: { user }, error } = await supabase.auth.getUser()
     if (error) throw error
     return user

@@ -5,11 +5,13 @@ import { ArrowLeft, MapPin, Users, Clock, Star, Utensils, Phone, Globe } from 'l
 import Image from 'next/image'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 
 export async function generateStaticParams() {
   try {
-    const supabase = await createClient()
+    const cookieStore = await cookies()
+    const supabase = await createClient({ cookieStore })
     const { data: restaurants, error } = await supabase
       .from('restaurants')
       .select('id')
@@ -35,7 +37,8 @@ export async function generateStaticParams() {
 
 async function getRestaurant(id: string) {
   try {
-    const supabase = await createClient()
+    const cookieStore = await cookies()
+    const supabase = await createClient({ cookieStore })
     const { data: restaurant, error } = await supabase
       .from('restaurants')
       .select('*')

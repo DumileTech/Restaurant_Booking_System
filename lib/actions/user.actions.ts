@@ -1,5 +1,6 @@
 'use server'
 
+import { cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 import { validateUser } from '@/lib/utils/validation'
 import { handleApiError, AuthenticationError } from '@/lib/utils/errors'
@@ -8,7 +9,8 @@ import { revalidatePath } from 'next/cache'
 
 // Get current user from session
 async function getCurrentUser() {
-  const supabase = await createClient()
+  const cookieStore = await cookies()
+  const supabase = await createClient({ cookieStore })
   
   try {
     const { data: { user }, error } = await supabase.auth.getUser()

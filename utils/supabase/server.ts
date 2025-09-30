@@ -1,12 +1,13 @@
 // utils/supabase/server.ts
 
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+import { cookies, type ReadonlyRequestCookies } from 'next/headers';
 import { SupabaseClient } from '@supabase/supabase-js'; // <--- IMPORTANT: Import the base client
 
 // Define a type for our custom options
 interface CreateClientOptions {
   useServiceRole?: boolean;
+  cookieStore?: ReadonlyRequestCookies;
 }
 
 // A cache for the service role client so we don't create it on every call
@@ -46,7 +47,8 @@ export const createClient = async (options?: CreateClientOptions) => {
   // --- For all other cases, create a standard, user-session client ---
   console.log('[createClient] Creating a standard user-session client.');
   try {
-  const cookieStore = await cookies();
+    // Use provided cookieStore or get it from Next.js
+    const cookieStore = options?.cookieStore || await cookies();
     console.log('[createClient] Cookie store retrieved successfully.');
 
     const client = createServerClient(

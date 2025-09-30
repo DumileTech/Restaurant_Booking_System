@@ -3,11 +3,13 @@ import AuthButton from '@/components/auth/AuthButton'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Star, Award, MapPin } from 'lucide-react'
+import { cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 
 async function getRestaurants() {
   try {
-    const supabase = await createClient()
+    const cookieStore = await cookies()
+    const supabase = await createClient({ cookieStore })
     const { data: restaurants, error } = await supabase
       .from('restaurants')
       .select('*')
@@ -28,7 +30,8 @@ async function getRestaurants() {
 
 async function getFilterOptions() {
   try {
-    const supabase = await createClient()
+    const cookieStore = await cookies()
+    const supabase = await createClient({ cookieStore })
     const { data: restaurants, error } = await supabase
       .from('restaurants')
       .select('cuisine, location')

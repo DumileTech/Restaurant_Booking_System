@@ -1,5 +1,6 @@
 'use server'
 
+import { cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 import { validateAuth } from '@/lib/utils/validation'
 import { handleApiError, AuthenticationError, ValidationError } from '@/lib/utils/errors'
@@ -7,6 +8,7 @@ import { sanitizeString, sanitizeEmail } from '@/lib/utils/validation'
 
 export async function registerUser(formData: FormData) {
   try {
+    const cookieStore = await cookies()
     const email = formData.get('email') as string
     const password = formData.get('password') as string
     const name = formData.get('name') as string
@@ -79,6 +81,7 @@ export async function registerUser(formData: FormData) {
 
 export async function loginUser(formData: FormData) {
   try {
+    const cookieStore = await cookies()
     const email = formData.get('email') as string
     const password = formData.get('password') as string
 
@@ -91,7 +94,7 @@ export async function loginUser(formData: FormData) {
       }
     }
 
-    const supabase = await createClient()
+    const supabase = await createClient({ cookieStore })
     
     // Sign in user with Supabase auth
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -134,7 +137,8 @@ export async function loginUser(formData: FormData) {
 
 export async function logoutUser() {
   try {
-    const supabase = await createClient()
+    const cookieStore = await cookies()
+    const supabase = await createClient({ cookieStore })
     await supabase.auth.signOut()
     
     return {

@@ -7,11 +7,13 @@ import RewardsHistory from '@/components/rewards/RewardsHistory'
 import { Award, Calendar, Clock, MapPin, Star } from 'lucide-react'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
 async function getUserData(userId: string) {
+  const cookieStore = await cookies()
   const supabase = await createClient({ useServiceRole: true })
   const [userResult, bookingsResult, rewardsResult] = await Promise.all([
     supabase
@@ -47,7 +49,8 @@ async function getUserData(userId: string) {
 }
 
 export default async function AccountPage({ searchParams }: { searchParams: { success?: string } }) {
-  const supabase = await createClient()
+  const cookieStore = await cookies()
+  const supabase = await createClient({ cookieStore })
   const { data: { user } } = await supabase.auth.getUser()
   
   if (!user) {
